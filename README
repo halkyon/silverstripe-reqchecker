@@ -1,0 +1,11 @@
+# SilverStripe Requirements Checker
+
+This will check your server environment to make sure it is configured correctly.
+
+Currently it only checks PHP configuration. Future enhancements include checking Apache,
+IIS 7.x and MySQL database, as well as file permissions.
+
+## Using
+
+ 1. Copy silverstripe_requirements.php to somewhere in your webroot, e.g. /var/www/
+ 2. Fire up a browser and point to that file, e.g. "http://localhost/silverstripe_requirements.php"
