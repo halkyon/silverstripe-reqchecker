@@ -56,7 +56,7 @@ class RequirementsFormatter {
 		if($this->isCli()) {
 			return PHP_EOL;
 		} else {
-			return '<br>';
+			return '<br>' . PHP_EOL;
 		}
 	}
 
@@ -66,14 +66,14 @@ $req = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
 if(isset($_SERVER['HTTP_HOST'])) {
-	echo '<html>';
-	echo '<head>';
-	echo '<title>SilverStripe Requirements</title>';
-	echo '<style>';
-	echo 'span.pass { color: green; } span.fail { color: red; }';
-	echo '</style>';
-	echo '</head>';
-	echo '<body>';
+	echo '<html>' . PHP_EOL;
+	echo '<head>' . PHP_EOL;
+	echo '<title>SilverStripe Requirements</title>' . PHP_EOL;
+	echo '<style type="text/css">' . PHP_EOL;
+	echo '@import url("styles.css");' . PHP_EOL;
+	echo '</style>' . PHP_EOL;
+	echo '</head>' . PHP_EOL;
+	echo '<body>' . PHP_EOL;
 }
 
 echo $f->heading('System information', 2);
@@ -104,7 +104,7 @@ echo $f->nl();
 echo $f->heading('PHP extensions', 3);
 echo $f->showAssertion('curl extension loaded', extension_loaded('curl'));
 echo $f->showAssertion('dom extension loaded', extension_loaded('dom'));
-echo $f->showAssertion('gd2 extension loaded', extension_loaded('gd'));
+echo $f->showAssertion('gd extension loaded', extension_loaded('gd'));
 echo $f->showAssertion('iconv extension loaded', extension_loaded('iconv'));
 echo $f->showAssertion('mbstring extension loaded', extension_loaded('mbstring'));
 if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', extension_loaded('posix'));
@@ -117,7 +117,7 @@ echo $f->showAssertion('DOMDocument exists', class_exists('DOMDocument'));
 echo $f->showAssertion('SimpleXMLElement exists', class_exists('SimpleXMLElement'));
 
 if(isset($_SERVER['HTTP_HOST'])) {
-	echo '</body>';
+	echo '</body>' . PHP_EOL;
 	echo '</html>';
 }
 
