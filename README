@@ -1,6 +1,7 @@
 # SilverStripe Requirements Checker
 
-This will check your server environment to make sure it is configured correctly.
+This script will check your server environment to make sure it is configured correctly
+for SilverStripe (http://silverstripe.org).
 
 Currently it only checks PHP configuration. Future enhancements include checking Apache,
 IIS 7.x and MySQL database, as well as file permissions.
