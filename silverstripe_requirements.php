@@ -15,6 +15,7 @@
  * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.4 RC1
  * - Mac OS X 10.6.5: Apache 2.2.17 (mod_php5), PHP 5.3.3
  * 
+ * @package ssreqcheck
  * @author Sean Harvey <sean at silverstripe dot com>
  */
 class RequirementsChecker {
@@ -154,7 +155,13 @@ class RequirementsChecker {
 	}
 
 }
-
+/**
+ * Simple abstraction class which formats text based on whether PHP is running
+ * under the command line or from a web browser.
+ * 
+ * @package ssreqcheck
+ * @author Sean Harvey <sean at silverstripe dot com>
+ */
 class RequirementsFormatter {
 
 	function isCli() {
