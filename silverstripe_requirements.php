@@ -76,6 +76,12 @@ if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<body>';
 }
 
+echo $f->heading('System information', 2);
+echo $f->show(sprintf('System: %s', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown'));
+echo $f->show(sprintf('Server Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
+echo $f->show(sprintf('Server API: %s', php_sapi_name()));
+echo $f->nl();
+
 echo $f->heading('PHP configuration', 2);
 echo $f->show(sprintf('Version: %s', PHP_VERSION));
 echo $f->show(sprintf('php.ini path: %s', get_cfg_var('cfg_file_path')));
