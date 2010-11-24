@@ -9,7 +9,7 @@
  * 
  * @todo Check set_include_path() can be used (some hosts disable this)
  * @todo Check memory limit is at least 64M
- * @todo ini_set('memory_limit') will actually increase memory limit
+ * @todo Check ini_set('memory_limit') will actually increase memory limit
  * 
  * Has been tested on the following environments:
  * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.4 RC1
@@ -31,6 +31,7 @@ class RequirementsChecker {
 
 	/**
 	 * Retrieves PHP information from phpinfo() into an array.
+	 * @todo This doesn't work when PHP is running in CLI.
 	 * 
 	 * @author code at adspeed dot com 09-Dec-2005 11:31
 	 * @see http://php.net/manual/en/function.phpinfo.php
@@ -84,6 +85,7 @@ class RequirementsChecker {
 
 	/**
 	 * Check that the current PHP version is of at least the version specified.
+	 * 
 	 * @param mixed $version Minimum version of PHP to assert
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
@@ -91,9 +93,35 @@ class RequirementsChecker {
 		return version_compare($version, PHP_VERSION, '<=');
 	}
 
+	/**
+	 * Check that a PHP extension has been loaded.
+	 * 
+	 * @param string $name Name of extension, e.g. "gd"
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertPhpExtensionLoaded($name) {
+		return extension_loaded($name);
+	}
+
+	/**
+	 * Check that a PHP class exists.
+	 * 
+	 * @param string $name Name of class, e.g. "DOMDocument"
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertPhpClassExists($name) {
+		return class_exists($name);
+	}
+	
+	/**
+	 * Try to find the version of the given PHP extension.
+	 * 
+	 * @param string $name Name of extension, e.g. "gd"
+	 * @return string|false String of version, boolean FALSE on failure
+	 */
 	public function getPhpExtensionVersion($name) {
 		$info = $this->getPhpInfo();
-		$version = null;
+		$version = false;
 
 		if(isset($info[$name])) {
 			// find a key with "version" text and get that value
@@ -134,11 +162,7 @@ class RequirementsFormatter {
 	}
 
 	public function show($message) {
-		if($this->isCli()) {
-			return strip_tags($message) . PHP_EOL;
-		} else {
-			return $message . '<br>' . PHP_EOL;
-		}
+		return ($this->isCli()) ? strip_tags($message) . PHP_EOL : $message . '<br>' . PHP_EOL;
 	}
 
 	public function showAssertion($name, $result, $message = '', $tag = 'span') {
@@ -156,16 +180,12 @@ class RequirementsFormatter {
 	}
 
 	public function nl() {
-		if($this->isCli()) {
-			return PHP_EOL;
-		} else {
-			return '<br>' . PHP_EOL;
-		}
+		return ($this->isCli()) ? PHP_EOL : '<br>' . PHP_EOL;
 	}
 
 }
 
-$req = new RequirementsChecker();
+$r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
 if(isset($_SERVER['HTTP_HOST'])) {
@@ -192,34 +212,34 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 
 echo $f->heading('PHP version', 3);
-echo $f->showAssertion('PHP version at least 5.2.0', $req->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
+echo $f->showAssertion('PHP version at least 5.2.0', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
 
 echo $f->heading('PHP configuration options', 3);
-echo $f->showAssertion('asp_tags option set to Off', $req->assertPhpIniOptionOff('asp_tags'));
-echo $f->showAssertion('safe_mode set to Off', $req->assertPhpIniOptionOff('safe_mode'));
-echo $f->showAssertion('allow_call_time_pass_reference option set to Off', $req->assertPhpIniOptionOff('allow_call_time_pass_reference'));
-echo $f->showAssertion('short_open_tag option option set to Off', $req->assertPhpIniOptionOff('short_open_tag'));
-echo $f->showAssertion('magic_quotes_gpc option set to Off', $req->assertPhpIniOptionOff('magic_quotes_gpc'));
-echo $f->showAssertion('register_globals option set to Off', $req->assertPhpIniOptionOff('register_globals'));
-echo $f->showAssertion('session.auto_start option set to Off', $req->assertPhpIniOptionOff('session.auto_start'));
+echo $f->showAssertion('asp_tags option set to Off', $r->assertPhpIniOptionOff('asp_tags'));
+echo $f->showAssertion('safe_mode set to Off', $r->assertPhpIniOptionOff('safe_mode'));
+echo $f->showAssertion('allow_call_time_pass_reference option set to Off', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'));
+echo $f->showAssertion('short_open_tag option option set to Off', $r->assertPhpIniOptionOff('short_open_tag'));
+echo $f->showAssertion('magic_quotes_gpc option set to Off', $r->assertPhpIniOptionOff('magic_quotes_gpc'));
+echo $f->showAssertion('register_globals option set to Off', $r->assertPhpIniOptionOff('register_globals'));
+echo $f->showAssertion('session.auto_start option set to Off', $r->assertPhpIniOptionOff('session.auto_start'));
 echo $f->nl();
 
 echo $f->heading('PHP extensions', 3);
-echo $f->showAssertion('curl extension loaded', extension_loaded('curl'));
-echo $f->showAssertion('dom extension loaded', extension_loaded('dom'));
-echo $f->showAssertion('gd extension loaded', extension_loaded('gd'));
-echo $f->showAssertion('gd extension is at least version 2.0', $req->assertMinimumPhpExtensionVersion('gd', '2.0'), $req->getPhpExtensionVersion('gd'));
-echo $f->showAssertion('iconv extension loaded', extension_loaded('iconv'));
-echo $f->showAssertion('mbstring extension loaded', extension_loaded('mbstring'));
-if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', extension_loaded('posix'));
-echo $f->showAssertion('tidy extension loaded', extension_loaded('tidy'));
-echo $f->showAssertion('xml extension loaded', extension_loaded('xml'));
+echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
+echo $f->showAssertion('dom extension loaded', $r->assertPhpExtensionLoaded('dom'));
+echo $f->showAssertion('gd extension loaded', $r->assertPhpExtensionLoaded('gd'));
+echo $f->showAssertion('gd extension is at least version 2.0', $r->assertMinimumPhpExtensionVersion('gd', '2.0'), $r->getPhpExtensionVersion('gd'));
+echo $f->showAssertion('iconv extension loaded', $r->assertPhpExtensionLoaded('iconv'));
+echo $f->showAssertion('mbstring extension loaded', $r->assertPhpExtensionLoaded('mbstring'));
+if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', $r->assertPhpExtensionLoaded('posix'));
+echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'));
+echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
 echo $f->nl();
 
 echo $f->heading('PHP core classes', 3);
-echo $f->showAssertion('DOMDocument exists', class_exists('DOMDocument'));
-echo $f->showAssertion('SimpleXMLElement exists', class_exists('SimpleXMLElement'));
+echo $f->showAssertion('DOMDocument exists', $r->assertPhpClassExists('DOMDocument'));
+echo $f->showAssertion('SimpleXMLElement exists', $r->assertPhpClassExists('SimpleXMLElement'));
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;
