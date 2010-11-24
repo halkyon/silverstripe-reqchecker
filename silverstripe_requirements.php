@@ -74,8 +74,8 @@ class RequirementsChecker {
 	}
 
 	/**
-	 * Check that a php.ini option is set to "Off"
-	 * ini_get() returns as Off settings as an empty string.
+	 * Check that a php.ini option is set to "<strong>Off</strong>"
+	 * ini_get() returns as <strong>Off</strong> settings as an empty string.
 	 * 
 	 * @param string $name Name of configuration setting
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
@@ -154,6 +154,47 @@ class RequirementsChecker {
 		return version_compare($version, $this->getPhpExtensionVersion($name, $version), '<=');
 	}
 
+	/**
+	 * Convert given memory limit into bytes.
+	 * 
+	 * @param string $mem Existing memory limit e.g. "64M" to convert to bytes
+	 * @return int Memory limit in bytes
+	 */
+	public function convertPhpMemoryLimitBytes($mem) {
+		switch(strtolower(substr($mem, -1))) {
+			case 'k':
+				return round(substr($mem, 0, -1) * 1024);
+				break;
+			case 'm':
+				return round(substr($mem, 0, -1) * 1024 * 1024);
+				break;
+			case 'g':
+				return round(substr($mem, 0, -1) * 1024 * 1024 * 1024);
+				break;
+			default:
+				return round($mem);
+		}
+	}
+
+	/**
+	 * Check that PHP is currently given a memory limit of at least the specified amount.
+	 * @param string $minimum Minimum limit to check, e.g. "64M"
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertMinimumPhpMemoryLimit($minimum) {
+		return ($this->convertPhpMemoryLimitBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryLimitBytes($minimum)) ? true : false;
+	}
+
+	/**
+	 * Check that the date.timezone PHP configuration option has been set
+	 * to a valid timezone identifier.
+	 * 
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertPhpDateTimezoneSetAndValid() {
+		return ini_get('date.timezone') && in_array(ini_get('date.timezone'), timezone_identifiers_list());
+	}
+
 }
 /**
  * Simple abstraction class which formats text based on whether PHP is running
@@ -219,27 +260,32 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 
 echo $f->heading('PHP version', 3);
-echo $f->showAssertion('PHP version at least 5.2.0', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
+echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
 
 echo $f->heading('PHP configuration options', 3);
-echo $f->showAssertion('asp_tags option set to Off', $r->assertPhpIniOptionOff('asp_tags'));
-echo $f->showAssertion('safe_mode set to Off', $r->assertPhpIniOptionOff('safe_mode'));
-echo $f->showAssertion('allow_call_time_pass_reference option set to Off', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'));
-echo $f->showAssertion('short_open_tag option option set to Off', $r->assertPhpIniOptionOff('short_open_tag'));
-echo $f->showAssertion('magic_quotes_gpc option set to Off', $r->assertPhpIniOptionOff('magic_quotes_gpc'));
-echo $f->showAssertion('register_globals option set to Off', $r->assertPhpIniOptionOff('register_globals'));
-echo $f->showAssertion('session.auto_start option set to Off', $r->assertPhpIniOptionOff('session.auto_start'));
+echo $f->showAssertion('memory_limit at least <strong>64M</strong>', $r->assertMinimumPhpMemoryLimit('64M'), ini_get('memory_limit'));
+echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
+echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'));
+echo $f->showAssertion('safe_mode set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'));
+echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'));
+echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'));
+echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'));
+echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'));
+echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'));
 echo $f->nl();
 
 echo $f->heading('PHP extensions', 3);
 echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
 echo $f->showAssertion('dom extension loaded', $r->assertPhpExtensionLoaded('dom'));
 echo $f->showAssertion('gd extension loaded', $r->assertPhpExtensionLoaded('gd'));
-echo $f->showAssertion('gd extension is at least version 2.0', $r->assertMinimumPhpExtensionVersion('gd', '2.0'), $r->getPhpExtensionVersion('gd'));
+echo $f->showAssertion('gd extension version at least <strong>2.0</strong>', $r->assertMinimumPhpExtensionVersion('gd', '2.0'), $r->getPhpExtensionVersion('gd'));
+echo $f->showAssertion('hash extension loaded', $r->assertPhpExtensionLoaded('hash'));
 echo $f->showAssertion('iconv extension loaded', $r->assertPhpExtensionLoaded('iconv'));
 echo $f->showAssertion('mbstring extension loaded', $r->assertPhpExtensionLoaded('mbstring'));
 if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', $r->assertPhpExtensionLoaded('posix'));
+echo $f->showAssertion('session extension loaded', $r->assertPhpExtensionLoaded('session'));
+echo $f->showAssertion('tokenizer extension loaded', $r->assertPhpExtensionLoaded('tokenizer'));
 echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'));
 echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
 echo $f->nl();
