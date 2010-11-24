@@ -142,11 +142,7 @@ class RequirementsFormatter {
 	}
 
 	public function showAssertion($name, $result, $message = '', $tag = 'span') {
-		if($result == true) {
-			$status = 'passed';
-		} else {
-			$status = 'failed';
-		}
+		$status = ($result == true) ? 'passed' : 'failed';
 		$result = strtoupper($status) . ': ' . $name . ($message ? sprintf(' (%s)', $message) : '');
 		return $this->show(($tag ? sprintf('<%s class="%s">', $tag, $status) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
 	}
