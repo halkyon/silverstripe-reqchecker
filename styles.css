@@ -4,9 +4,9 @@ body {
 	line-height: 1.3;
 }
 
-span.pass {
+span.passed {
 	color: green;
 }
-span.fail {
+span.failed {
 	color: red;
 }
