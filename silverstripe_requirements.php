@@ -9,8 +9,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion, FALSE failed assertion
 	 */
 	public function assertPhpIniOptionOff($option) {
-		$actual = ini_get($option);
-		return ($actual == false) ? true : false;
+		return ini_get($option) == false;
 	}
 
 	public function assertMinimumPhpVersion($version) {
@@ -36,11 +35,13 @@ class RequirementsFormatter {
 	public function showAssertion($name, $message = '', $tag = 'span') {
 		$result = '';
 		if(is_bool($message) && $message == true) {
+			$status = 'pass';
 			$result = 'PASSED: ' . $name;
 		} else {
+			$status = 'fail';
 			$result = 'FAILED: ' . $name . ($message ? sprintf(' (%s)', $message) : '');
 		}
-		return $this->show(($tag ? sprintf('<%s class="pass">', $tag) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
+		return $this->show(($tag ? sprintf('<%s class="%s">', $tag, $status) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
 	}
 
 	public function heading($text, $level = 1) {
