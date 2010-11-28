@@ -5,12 +5,7 @@ error_reporting(E_ALL);
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
  * 
- * So far, this only checks PHP configuration, but it could be extended into
- * checking other things such as Apache (e.g. "AllowOverride All" has been set),
- * and MySQL database configuration, as well as file permissions.
- * 
  * @todo Check set_include_path() can be used (some hosts disable this)
- * @todo Check memory limit is at least 64M
  * @todo Check ini_set('memory_limit') will actually increase memory limit
  * 
  * Has been tested on the following environments:
@@ -40,7 +35,7 @@ class RequirementsChecker {
 	 * @see http://php.net/manual/en/function.phpinfo.php
 	 * @return array
 	 */
-	protected function getPhpInfo() {
+	public function getPhpInfo() {
 		if($this->phpInfo) return $this->phpInfo;
 
 		ob_start();
@@ -236,7 +231,7 @@ class RequirementsFormatter {
 	 * Is PHP currently running as CLI?
 	 * @return boolean TRUE yes | FALSE no
 	 */
-	function isCli() {
+	protected function isCli() {
 		return !isset($_SERVER['HTTP_HOST']);
 	}
 

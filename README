@@ -3,10 +3,8 @@
 This script will check your server environment to make sure it is configured correctly
 for SilverStripe (http://silverstripe.org).
 
-Currently it only checks PHP configuration. Future enhancements include checking Apache,
-IIS 7.x and MySQL database, as well as file permissions.
-
 ## Using
 
- 1. Copy silverstripe_requirements.php to somewhere in your webroot, e.g. /var/www/
- 2. Fire up a browser and point to that file, e.g. "http://localhost/silverstripe_requirements.php"
+ 1. Unpack the source files to somewhere in your webroot, e.g. /var/www/ssreqcheck
+ 2. Fire up a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
+
