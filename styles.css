@@ -10,3 +10,6 @@ span.passed {
 span.failed {
 	color: red;
 }
+span.warning {
+	color: orange;
+}

@@ -230,16 +230,36 @@ class RequirementsChecker {
  */
 class RequirementsFormatter {
 
+	/**
+	 * Is PHP currently running as CLI?
+	 * @return boolean TRUE yes | FALSE no
+	 */
 	function isCli() {
 		return !isset($_SERVER['HTTP_HOST']);
 	}
 
+	/**
+	 * Return a message, along with system EOL character.
+	 * 
+	 * If in CLI, strip all HTML tags that may be present in message.
+	 * @return processed message to show
+	 */
 	public function show($message) {
 		return ($this->isCli()) ? strip_tags($message) . PHP_EOL : $message . '<br>' . PHP_EOL;
 	}
 
-	public function showAssertion($name, $result, $message = '', $tag = 'span') {
-		$status = ($result == true) ? 'passed' : 'failed';
+	/**
+	 * Return a message from an assertion suitable for someone to read.
+	 * 
+	 * @param string $name Name of the assertion made, e.g. "PHP memory at least 64M"
+	 * @param boolean $result Boolean result of assertion, either TRUE passed or FALSE failed
+	 * @param string $message Optional: Show summary of the assertion next to name
+	 * @param boolean $fatal Optional: Show assertion failure as fatal. Set to false for warning
+	 * @param string $tag Optional: HTML tag to use. By default, it's <span>
+	 * @return string Assertion encoded in an HTML string (or without HTML if in CLI mode)
+	 */
+	public function showAssertion($name, $result, $message = '', $fatal = true, $tag = 'span') {
+		$status = ($result == true) ? 'passed' : ($fatal ? 'failed' : 'warning');
 		$result = strtoupper($status) . ': ' . $name . ($message ? sprintf(' (%s)', $message) : '');
 		return $this->show(($tag ? sprintf('<%s class="%s">', $tag, $status) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
 	}
@@ -294,7 +314,7 @@ echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTi
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'));
 echo $f->showAssertion('safe_mode set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'));
 echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'));
-echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'));
+echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'), '', false);
 echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'));
 echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'));
 echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'));
@@ -312,8 +332,8 @@ echo $f->showAssertion('tokenizer extension loaded', $r->assertPhpExtensionLoade
 echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'));
 echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
 echo $f->nl();
-echo $f->showAssertion('DOMDocument exists', $r->assertPhpClassExists('DOMDocument'));
-echo $f->showAssertion('SimpleXMLElement exists', $r->assertPhpClassExists('SimpleXMLElement'));
+echo $f->showAssertion('DOMDocument class exists', $r->assertPhpClassExists('DOMDocument'));
+echo $f->showAssertion('SimpleXMLElement class exists', $r->assertPhpClassExists('SimpleXMLElement'));
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;
