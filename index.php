@@ -352,7 +352,7 @@ echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_p
 echo $f->nl();
 
 echo $f->heading('Webserver configuration', 2);
-echo $f->showAssertion('URL rewriting enabled', $r->assertWebserverUrlRewritingSupport());
+echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), '', false);
 echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
