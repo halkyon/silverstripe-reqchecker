@@ -160,7 +160,7 @@ class RequirementsChecker {
 	 * @param string $mem Existing memory limit e.g. "64M" to convert to bytes
 	 * @return int Memory limit in bytes
 	 */
-	public function convertPhpMemoryLimitBytes($mem) {
+	public function convertPhpMemoryBytes($mem) {
 		switch(strtolower(substr($mem, -1))) {
 			case 'k':
 				return round(substr($mem, 0, -1) * 1024);
@@ -181,8 +181,8 @@ class RequirementsChecker {
 	 * @param string $minimum Minimum limit to check, e.g. "64M"
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
-	public function assertMinimumPhpMemoryLimit($minimum) {
-		return ($this->convertPhpMemoryLimitBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryLimitBytes($minimum)) ? true : false;
+	public function assertMinimumPhpMemory($minimum) {
+		return ($this->convertPhpMemoryBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryBytes($minimum)) ? true : false;
 	}
 
 	/**
@@ -324,7 +324,7 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
-echo $f->showAssertion('memory_limit at least <strong>64M</strong>', $r->assertMinimumPhpMemoryLimit('64M'), ini_get('memory_limit'));
+echo $f->showAssertion('memory_limit at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'));
 echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
 echo $f->showAssertion('safe_mode set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
