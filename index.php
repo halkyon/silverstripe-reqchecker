@@ -5,8 +5,6 @@ error_reporting(E_ALL);
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
  * 
- * @todo Check set_include_path() can be used (some hosts disable this)
- * @todo Check ini_set('memory_limit') will actually increase memory limit
  * @todo Provide recommendations for assertions that fail
  * 
  * Has been tested on the following environments:
@@ -177,12 +175,48 @@ class RequirementsChecker {
 	}
 
 	/**
+	 * Convert bytes to a string so it can be used in ini_set()
+	 * @param int|string $bytes Bytes to convert
+	 * @return string
+	 */
+	public function convertBytesToString($bytes) {
+		return (($bytes / 1024) / 1024) . 'M';
+	}
+
+	/**
 	 * Check that PHP is currently given a memory limit of at least the specified amount.
 	 * @param string $minimum Minimum limit to check, e.g. "64M"
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertMinimumPhpMemory($minimum) {
 		return ($this->convertPhpMemoryBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryBytes($minimum)) ? true : false;
+	}
+
+	/**
+	 * Check that ini_set() can be used to set a higher memory limit than the original limit.
+	 * @param string $increase Increase amount, can be either "64M" string or bytes integer
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertIncreasePhpMemory($increase) {
+		$original = $this->convertPhpMemoryBytes(ini_get('memory_limit'));
+		if(is_string($increase)) $increase = $this->convertPhpMemoryBytes($increase);
+		ini_set('memory_limit', $this->convertBytesToString($original + $increase));
+		$new = $this->convertPhpMemoryBytes(ini_get('memory_limit'));
+		ini_set('memory_limit', $this->convertBytesToString($original));
+		return ($new == $original + $increase) ? true : false;
+	}
+
+	/**
+	 * Check that set_include_path() can be used to set additional include paths.
+	 * @param string $paths Additional paths to set
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertSetAdditionalIncludePaths($paths) {
+		$original = get_include_path();
+		set_include_path($paths . PATH_SEPARATOR . get_include_path());
+		$new = get_include_path();
+		set_include_path($original);
+		return ($new == $paths . PATH_SEPARATOR . $original) ? true : false;
 	}
 
 	/**
@@ -324,16 +358,21 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
-echo $f->showAssertion('memory_limit at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'));
+echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'), false);
 echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
-echo $f->showAssertion('safe_mode set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
+echo $f->showAssertion('safe_mode option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
 echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'), ini_get('allow_call_time_pass_reference') ? 'On' : '');
 echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'), ini_get('short_open_tag') ? 'On' : '', false);
 echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'), ini_get('magic_quotes_gpc') ? 'On' : '');
 echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'), ini_get('register_globals') ? 'On' : '');
 echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'), ini_get('session.auto_start') ? 'On' : '');
 echo $f->nl();
+
+echo $f->showAssertion('can increase memory_limit option by 64M using ini_set()', $r->assertIncreasePhpMemory('64M'));
+echo $f->showAssertion('can set additional include paths using set_include_path()', $r->assertSetAdditionalIncludePaths('/test/path'));
+echo $f->nl();
+
 echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
 echo $f->showAssertion('dom extension loaded', $r->assertPhpExtensionLoaded('dom'));
 echo $f->showAssertion('gd extension loaded', $r->assertPhpExtensionLoaded('gd'));
