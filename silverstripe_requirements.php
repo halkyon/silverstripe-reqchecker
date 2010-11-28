@@ -195,6 +195,31 @@ class RequirementsChecker {
 		return ini_get('date.timezone') && in_array(ini_get('date.timezone'), timezone_identifiers_list());
 	}
 
+	/**
+	 * Determine if URL rewriting support is working on the webserver.
+	 * 
+	 * Rather than doing specific checks for Apache or IIS, this method will
+	 * check the response of a specific test URL in order to make a determination
+	 * of URL rewriting is working or not.
+	 * 
+	 * @todo This doesn't work when PHP is running in CLI.
+	 * 
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertWebserverUrlRewritingSupport() {
+		if(!function_exists('curl_init')) {
+			return false;
+		} else {
+			$ch = curl_init();
+			$url = sprintf('http://127.0.0.1/%s/rewritetest/test-url', dirname($_SERVER['SCRIPT_NAME']));
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($ch);
+			curl_close($ch);
+			return preg_match('/test.php/', $response);
+		}
+	}
+
 }
 /**
  * Simple abstraction class which formats text based on whether PHP is running
@@ -257,13 +282,13 @@ echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
 echo $f->nl();
 
-echo $f->heading('PHP configuration', 2);
-
-echo $f->heading('PHP version', 3);
-echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
+echo $f->heading('Webserver configuration', 2);
+echo $f->showAssertion('URL rewriting enabled', $r->assertWebserverUrlRewritingSupport());
 echo $f->nl();
 
-echo $f->heading('PHP configuration options', 3);
+echo $f->heading('PHP configuration', 2);
+echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
+echo $f->nl();
 echo $f->showAssertion('memory_limit at least <strong>64M</strong>', $r->assertMinimumPhpMemoryLimit('64M'), ini_get('memory_limit'));
 echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'));
@@ -274,8 +299,6 @@ echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r
 echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'));
 echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'));
 echo $f->nl();
-
-echo $f->heading('PHP extensions', 3);
 echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
 echo $f->showAssertion('dom extension loaded', $r->assertPhpExtensionLoaded('dom'));
 echo $f->showAssertion('gd extension loaded', $r->assertPhpExtensionLoaded('gd'));
@@ -289,8 +312,6 @@ echo $f->showAssertion('tokenizer extension loaded', $r->assertPhpExtensionLoade
 echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'));
 echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
 echo $f->nl();
-
-echo $f->heading('PHP core classes', 3);
 echo $f->showAssertion('DOMDocument exists', $r->assertPhpClassExists('DOMDocument'));
 echo $f->showAssertion('SimpleXMLElement exists', $r->assertPhpClassExists('SimpleXMLElement'));
 
