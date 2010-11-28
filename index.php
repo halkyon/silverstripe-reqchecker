@@ -7,10 +7,13 @@ error_reporting(E_ALL);
  * 
  * @todo Check set_include_path() can be used (some hosts disable this)
  * @todo Check ini_set('memory_limit') will actually increase memory limit
+ * @todo Provide recommendations for assertions that fail
  * 
  * Has been tested on the following environments:
  * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.4 RC1
  * - Mac OS X 10.6.5: Apache 2.2.17 (mod_php5), PHP 5.3.3
+ * - Debian 5 "lenny": Apache 2.2.9 (mod_php5), PHP 5.2.6
+ * - Ubuntu Server 10.10: Apache 2.2.16 (mod_php5), PHP 5.3.3
  * 
  * @package ssreqcheck
  * @author Sean Harvey <sean at silverstripe dot com>
