@@ -241,8 +241,9 @@ class RequirementsFormatter {
 
 	/**
 	 * Return a message, along with system EOL character.
-	 * 
 	 * If in CLI, strip all HTML tags that may be present in message.
+	 * 
+	 * @param string $message Message to show
 	 * @return processed message to show
 	 */
 	public function show($message) {
@@ -265,6 +266,13 @@ class RequirementsFormatter {
 		return $this->show(($tag ? sprintf('<%s class="%s">', $tag, $status) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
 	}
 
+	/**
+	 * Return a text shown as a header.
+	 * 
+	 * @param string $text Text to show for header
+	 * @param int $level Level of header as an integer
+	 * @return processed message to show
+	 */
 	public function heading($text, $level = 1) {
 		if($this->isCli()) {
 			return '** ' . $text . ' **' . PHP_EOL;
@@ -273,6 +281,12 @@ class RequirementsFormatter {
 		}
 	}
 
+	/**
+	 * Show a newline character with a <br> HTML element.
+	 * If in CLI, just show a newline character.
+	 * 
+	 * @return processed message to show
+	 */
 	public function nl() {
 		return ($this->isCli()) ? PHP_EOL : '<br>' . PHP_EOL;
 	}
