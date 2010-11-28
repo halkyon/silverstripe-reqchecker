@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+
 /**
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
