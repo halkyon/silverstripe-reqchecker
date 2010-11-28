@@ -207,16 +207,17 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertWebserverUrlRewritingSupport() {
-		if(!function_exists('curl_init')) {
-			return false;
-		} else {
+		if(function_exists('curl_init')) {
 			$ch = curl_init();
-			$url = sprintf('http://127.0.0.1/%s/rewritetest/test-url', dirname($_SERVER['SCRIPT_NAME']));
+			$url = sprintf('http://127.0.0.1/%s/rewritetest/test-url?testquery=testvalue', dirname($_SERVER['SCRIPT_NAME']));
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($ch);
 			curl_close($ch);
-			return preg_match('/test.php/', $response);
+
+			return preg_match('/test.php queryval: testvalue/', $response);
+		} else {
+			return false;
 		}
 	}
 
