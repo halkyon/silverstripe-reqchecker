@@ -326,7 +326,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	sprintf('URL rewrite test failed. Please check <strong>%s</strong> in your browser directly"', $r->getWebserverUrlRewritingURL()),
+	sprintf('URL rewrite test failed. Please check <strong>%s</strong> in your browser directly', $r->getWebserverUrlRewritingURL()),
 	false
 );
 echo $f->nl();
