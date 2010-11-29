@@ -3,7 +3,7 @@
 ## Introduction
 
 A script which will check your server environment to make sure it is configured correctly
-for [SilverStripe](http://silverstripe.org).
+for [SilverStripe CMS / Framework](http://silverstripe.org).
 
 It has been tested on the following dedicated platforms:
 
