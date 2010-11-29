@@ -13,7 +13,7 @@ It has been tested on the following dedicated platforms:
  * Debian GNU/Linux "lenny": Apache 2.2.9 (mod_php5 SAPI), PHP 5.2.6
  * Ubuntu Server 10.10: Apache 2.2.16 (mod_php5 SAPI), PHP 5.3.3
 
-And the following shared host platforms:
+and on the following shared hosts:
 
  * Arvixe Red Hat Linux: Apache 2.2.16 (CGI SAPI), PHP 5.2.14
 
