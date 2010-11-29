@@ -27,12 +27,31 @@ and on the following shared hosts:
  1. Unpack the source files to somewhere in your server webroot, e.g. /var/www/ssreqcheck
  2. Open a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
 
+You can also run it on the command line. For example:
+
+	php /var/www/ssreqcheck/index.php
+
+## Known issues
+
+ * URL rewrite check fails when placing check files under an existing folder that already has an .htaccess file with rewrite rules and engine turned on (need to find a way to override the existing rewrite rules)
+ * URL rewrite check fails on command line unless you run the php script from the webroot
+
+This will pass:
+
+	cd /var/www; php ssreqcheck/index.php
+
+This will fail:
+
+	php /var/www/ssreqcheck/index.php
+
 ## Future enhancements
 
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
  * Database checks - by default, MySQL version
  * Environment specific (dev/prod) checks, e.g. production environment has 500 and 404 custom error pages setup correctly, and display_errors = Off in production
  * Display "Download and install SilverStripe" link at bottom of page if all checks pass (or only warnings shown)
+ * Check for opcode cacher being enabled (xcache, zend optimizer, wincache etc), warning if none enabled
+ * Check temp path available, and can write to it - show location of found temp path
 
 ## Contact
 
