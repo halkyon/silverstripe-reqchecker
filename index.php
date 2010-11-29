@@ -359,7 +359,7 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
-echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'), false);
+echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'));
 echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
 echo $f->showAssertion('safe_mode option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
