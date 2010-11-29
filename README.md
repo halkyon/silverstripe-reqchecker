@@ -31,6 +31,19 @@ You can also run it on the command line:
 
 	php /path/to/checker/index.php
 
+## Known issues
+
+ * URL rewrite check fails on command line unless you run the php script from the webroot
+
+This will pass:
+
+	cd ~/Sites
+	php ssreqcheck/index.php
+
+This will fail:
+
+	php ~/Sites/ssreqcheck/index.php
+
 ## Future enhancements
 
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
