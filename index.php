@@ -397,7 +397,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'date.timezone option set and valid',
 	$r->assertPhpDateTimezoneSetAndValid(),
-	'date.timezone option needs to be set to your server timezone. See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this.',
+	'date.timezone option needs to be set to your server timezone. See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this',
 	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
 );
 echo $f->showAssertion(
