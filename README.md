@@ -47,6 +47,7 @@ This will fail:
 
 ## Future enhancements
 
+ * Provide more detailed explanations and suggestions where failures and warnings occur
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
  * Database checks - by default, MySQL version
  * Environment specific (dev/prod) checks, e.g. production environment has 500 and 404 custom error pages setup correctly, and display_errors = Off in production
