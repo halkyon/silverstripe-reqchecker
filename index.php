@@ -189,7 +189,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertMinimumPhpMemory($minimum) {
-		return ($this->convertPhpMemoryBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryBytes($minimum)) ? true : false;
+		return $this->convertPhpMemoryBytes(ini_get('memory_limit')) >= $this->convertPhpMemoryBytes($minimum);
 	}
 
 	/**
@@ -203,7 +203,7 @@ class RequirementsChecker {
 		ini_set('memory_limit', $this->convertBytesToString($original + $increase));
 		$new = $this->convertPhpMemoryBytes(ini_get('memory_limit'));
 		ini_set('memory_limit', $this->convertBytesToString($original));
-		return ($new == $original + $increase) ? true : false;
+		return $new == $original + $increase;
 	}
 
 	/**
@@ -216,7 +216,7 @@ class RequirementsChecker {
 		set_include_path($paths . PATH_SEPARATOR . get_include_path());
 		$new = get_include_path();
 		set_include_path($original);
-		return ($new == $paths . PATH_SEPARATOR . $original) ? true : false;
+		return $new == $paths . PATH_SEPARATOR . $original;
 	}
 
 	/**
