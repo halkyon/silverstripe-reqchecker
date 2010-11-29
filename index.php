@@ -301,15 +301,20 @@ class RequirementsFormatter {
 	 * 
 	 * @param string $name Name of the assertion made, e.g. "PHP memory at least 64M"
 	 * @param boolean $result Boolean result of assertion, either TRUE passed or FALSE failed
-	 * @param string $message Optional: Show summary of the assertion next to name
+	 * @param string $message Optional: Message to show when failure occurs
 	 * @param boolean $fatal Optional: Show assertion failure as fatal. Set to false for warning
-	 * @param string $tag Optional: HTML tag to use. By default, it's <span>
 	 * @return string Assertion encoded in an HTML string (or without HTML if in CLI mode)
 	 */
-	public function showAssertion($name, $result, $message = '', $fatal = true, $tag = 'span') {
+	public function showAssertion($assertion, $result, $message, $fatal = true) {
 		$status = ($result == true) ? 'passed' : ($fatal ? 'failed' : 'warning');
-		$result = strtoupper($status) . ': ' . $name . ($message ? sprintf(' (%s)', $message) : '');
-		return $this->show(($tag ? sprintf('<%s class="%s">', $tag, $status) : '') . $result . ($tag ? sprintf('</%s>', $tag) : ''));
+		
+		if($result == true) {
+			$text = strtoupper($status) . ': ' . $assertion;
+		} else {
+			$text = strtoupper($status) . ': ' . $message;
+		}
+
+		return $this->show(sprintf('<span class="%s">', $status) . $text . '</span>');
 	}
 
 	/**
@@ -366,41 +371,130 @@ echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_p
 echo $f->nl();
 
 echo $f->heading('Webserver configuration', 2);
-echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), $r->getWebserverUrlRewritingResponse(), false);
+echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), $r->getWebserverUrlRewritingResponse(), false, 'URL rewrite test failed');
 echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
 
-echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'), false);
-echo $f->showAssertion('can increase memory_limit option by 64M using ini_set()', $r->assertIncreasePhpMemory('64M'));
-echo $f->showAssertion('can set additional include paths using set_include_path()', $r->assertSetAdditionalIncludePaths('/test/path'));
-echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'), $usingPhp53); // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
-echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
-echo $f->showAssertion('safe_mode option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
-echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'), ini_get('allow_call_time_pass_reference') ? 'On' : '', false);
-echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'), ini_get('short_open_tag') ? 'On' : '', false);
-echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'), ini_get('magic_quotes_gpc') ? 'On' : '');
-echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'), ini_get('register_globals') ? 'On' : '');
-echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'), ini_get('session.auto_start') ? 'On' : '');
+echo $f->showAssertion(
+	'memory_limit option at least <strong>64M</strong>',
+	$r->assertMinimumPhpMemory('64M'),
+	sprintf('You only have %s memory. SilverStripe requires at least <strong>64M</strong>', ini_get('memory_limit')),
+	false
+);
+echo $f->showAssertion(
+	'can increase memory_limit option by 64M using ini_set()',
+	$r->assertIncreasePhpMemory('64M'),
+	'Unable to increase memory by 64M. Please make sure you set at least 64M for PHP memory_limit option'
+);
+echo $f->showAssertion(
+	'can set additional include paths using set_include_path()',
+	$r->assertSetAdditionalIncludePaths('/test/path'),
+	'Additional paths cannot be set using set_include_path(). <a href="http://silverstripe.org/installing-silverstripe/show/12361">More information in silverstripe.org/forums</a>'
+);
+echo $f->showAssertion(
+	'date.timezone option set and valid',
+	$r->assertPhpDateTimezoneSetAndValid(),
+	'date.timezone option needs to be set to your server timezone. See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this.',
+	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
+);
+echo $f->showAssertion(
+	'asp_tags option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('asp_tags'),
+	'asp_tags option should be set to <strong>Off</strong>'
+);
+echo $f->showAssertion(
+	'safe_mode option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('safe_mode'),
+	'safe_mode is deprecated. Please set it to <strong>Off</strong>'
+);
+echo $f->showAssertion(
+	'allow_call_time_pass_reference option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('allow_call_time_pass_reference'),
+	'allow_call_time_pass_reference is deprecated. Please set it to <strong>Off</strong>',
+	false
+);
+echo $f->showAssertion(
+	'short_open_tag option option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('short_open_tag'),
+	'short_open_tag should be set to <strong>Off</strong>',
+	false
+);
+echo $f->showAssertion(
+	'magic_quotes_gpc option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('magic_quotes_gpc'),
+	'magic_quotes_gpc is deprecated. Please set it to <strong>Off</strong>'
+);
+echo $f->showAssertion(
+	'register_globals option set to <strong>Off</strong>',
+	$r->assertPhpIniOptionOff('register_globals'),
+	'register_globals is deprecated. Please set it to <strong>Off</strong>'
+);
 echo $f->nl();
 
-echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
-echo $f->showAssertion('dom extension loaded', $r->assertPhpExtensionLoaded('dom'));
-echo $f->showAssertion('gd extension loaded', $r->assertPhpExtensionLoaded('gd'));
-echo $f->showAssertion('gd extension version at least <strong>2.0</strong>', $r->assertMinimumPhpExtensionVersion('gd', '2.0'), $r->getPhpExtensionVersion('gd'));
-echo $f->showAssertion('hash extension loaded', $r->assertPhpExtensionLoaded('hash'));
-echo $f->showAssertion('iconv extension loaded', $r->assertPhpExtensionLoaded('iconv'));
-echo $f->showAssertion('mbstring extension loaded', $r->assertPhpExtensionLoaded('mbstring'));
-if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', $r->assertPhpExtensionLoaded('posix'));
-echo $f->showAssertion('session extension loaded', $r->assertPhpExtensionLoaded('session'));
-echo $f->showAssertion('tokenizer extension loaded', $r->assertPhpExtensionLoaded('tokenizer'));
-echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'), '', false);
-echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
-echo $f->nl();
-echo $f->showAssertion('DOMDocument class exists', $r->assertPhpClassExists('DOMDocument'));
-echo $f->showAssertion('SimpleXMLElement class exists', $r->assertPhpClassExists('SimpleXMLElement'));
+echo $f->showAssertion(
+	'curl extension loaded',
+	$r->assertPhpExtensionLoaded('curl'),
+	'curl extension not loaded'
+);
+echo $f->showAssertion(
+	'dom extension loaded',
+	$r->assertPhpExtensionLoaded('dom'),
+	'dom extension not loaded'
+);
+echo $f->showAssertion(
+	'gd extension loaded',
+	$r->assertPhpExtensionLoaded('gd'),
+	'gd extension not loaded'
+);
+echo $f->showAssertion(
+	'gd extension version at least <strong>2.0</strong>',
+	$r->assertMinimumPhpExtensionVersion('gd', '2.0'),
+	'gd extension is too old. SilverStripe requires at least gd version 2.0'
+);
+echo $f->showAssertion(
+	'hash extension loaded',
+	$r->assertPhpExtensionLoaded('hash'),
+	'hash extension not loaded'
+);
+echo $f->showAssertion(
+	'iconv extension loaded',
+	$r->assertPhpExtensionLoaded('iconv'),
+	'iconv extension not loaded'
+);
+echo $f->showAssertion(
+	'mbstring extension loaded',
+	$r->assertPhpExtensionLoaded('mbstring'),
+	'mbstring extension not loaded'
+);
+if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion(
+	'posix extension loaded',
+	$r->assertPhpExtensionLoaded('posix'),
+	'posix extension not loaded'
+);
+echo $f->showAssertion(
+	'session extension loaded',
+	$r->assertPhpExtensionLoaded('session'),
+	'session extension not loaded'
+);
+echo $f->showAssertion(
+	'tokenizer extension loaded',
+	$r->assertPhpExtensionLoaded('tokenizer'),
+	'tokenizer extension not loaded'
+);
+echo $f->showAssertion(
+	'tidy extension loaded',
+	$r->assertPhpExtensionLoaded('tidy'),
+	'tidy extension not loaded',
+	false
+);
+echo $f->showAssertion(
+	'xml extension loaded',
+	$r->assertPhpExtensionLoaded('xml'),
+	'xml extension not loaded'
+);
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;
