@@ -33,6 +33,7 @@ You can also run it on the command line. For example:
 
 ## Known issues
 
+ * URL rewrite check fails when placing check files under an existing folder that already has an .htaccess file with rewrite rules and engine turned on (need to find a way to override the existing rewrite rules)
  * URL rewrite check fails on command line unless you run the php script from the webroot
 
 This will pass:
@@ -50,6 +51,7 @@ This will fail:
  * Environment specific (dev/prod) checks, e.g. production environment has 500 and 404 custom error pages setup correctly, and display_errors = Off in production
  * Display "Download and install SilverStripe" link at bottom of page if all checks pass (or only warnings shown)
  * Check for opcode cacher being enabled (xcache, zend optimizer, wincache etc), warning if none enabled
+ * Check temp path available, and can write to it - show location of found temp path
 
 ## Contact
 
