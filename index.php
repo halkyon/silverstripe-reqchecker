@@ -14,7 +14,7 @@ class RequirementsChecker {
 
 	/**
 	 * Check that a php.ini option is set set to "Off".
-	 * ini_get() returns as <strong>Off</strong> settings as an empty string.
+	 * ini_get() returns "Off" settings as an empty string.
 	 * 
 	 * @param string $name Name of configuration setting
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
