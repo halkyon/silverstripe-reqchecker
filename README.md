@@ -27,6 +27,10 @@ and on the following shared hosts:
  1. Unpack the source files to somewhere in your server webroot, e.g. /var/www/ssreqcheck
  2. Open a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
 
+You can also run it on the command line:
+
+	php /path/to/checker/index.php
+
 ## Future enhancements
 
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
