@@ -331,6 +331,8 @@ class RequirementsFormatter {
 $r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
+$usingPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
+
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<html>' . PHP_EOL;
 	echo '<head>' . PHP_EOL;
@@ -363,10 +365,10 @@ echo $f->nl();
 echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'), false);
 echo $f->showAssertion('can increase memory_limit option by 64M using ini_set()', $r->assertIncreasePhpMemory('64M'));
 echo $f->showAssertion('can set additional include paths using set_include_path()', $r->assertSetAdditionalIncludePaths('/test/path'));
-echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
+echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'), $usingPhp53); // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
 echo $f->showAssertion('safe_mode option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
-echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'), ini_get('allow_call_time_pass_reference') ? 'On' : '');
+echo $f->showAssertion('allow_call_time_pass_reference option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('allow_call_time_pass_reference'), ini_get('allow_call_time_pass_reference') ? 'On' : '', false);
 echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('short_open_tag'), ini_get('short_open_tag') ? 'On' : '', false);
 echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'), ini_get('magic_quotes_gpc') ? 'On' : '');
 echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'), ini_get('register_globals') ? 'On' : '');
@@ -383,7 +385,7 @@ echo $f->showAssertion('mbstring extension loaded', $r->assertPhpExtensionLoaded
 if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion('posix extension loaded', $r->assertPhpExtensionLoaded('posix'));
 echo $f->showAssertion('session extension loaded', $r->assertPhpExtensionLoaded('session'));
 echo $f->showAssertion('tokenizer extension loaded', $r->assertPhpExtensionLoaded('tokenizer'));
-echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'));
+echo $f->showAssertion('tidy extension loaded', $r->assertPhpExtensionLoaded('tidy'), '', false);
 echo $f->showAssertion('xml extension loaded', $r->assertPhpExtensionLoaded('xml'));
 echo $f->nl();
 echo $f->showAssertion('DOMDocument class exists', $r->assertPhpClassExists('DOMDocument'));
