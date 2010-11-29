@@ -164,7 +164,7 @@ class RequirementsChecker {
 	 */
 	public function getWebserverUrlRewritingURL() {
 		$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
+		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, trim(dirname($_SERVER['SCRIPT_NAME']), '/'));
 	}
 
 	/**
