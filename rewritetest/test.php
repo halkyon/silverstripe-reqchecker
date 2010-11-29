@@ -1,2 +1,2 @@
 <?php
-echo __FILE__ . ' queryval: ' . $_GET['testquery'];
+echo 'OK: ' . __FILE__ . ' queryval: ' . $_GET['testquery'];

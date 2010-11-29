@@ -5,13 +5,19 @@ error_reporting(E_ALL);
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
  * 
- * @todo Provide recommendations for assertions that fail
+ * Tested in the following environments:
  * 
- * Has been tested on the following environments:
- * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.4 RC1
- * - Mac OS X 10.6.5: Apache 2.2.17 (mod_php5), PHP 5.3.3
+ * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.3 VC9 TS
+ * - Windows Server 2008 R2 Standard: IIS 7.5 (FastCGI), PHP 5.3.3 VC9 NTS
+ * - Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5), PHP 5.3.3
  * - Debian 5 "lenny": Apache 2.2.9 (mod_php5), PHP 5.2.6
  * - Ubuntu Server 10.10: Apache 2.2.16 (mod_php5), PHP 5.3.3
+ * - Arvixe Red Hat Linux: Apache 2.2.16 (FastCGI), PHP 5.2.14
+ *   @todo URL rewrite check fails for some reason on Arvixe.
+ *   This is a broken check, as there is a permission problem.
+ * 
+ * @todo Provide recommendations for assertions that fail
+ * @todo Display single value assertions e.g. "Off" not "On" as a table with actual versus recommended values
  * 
  * @package ssreqcheck
  * @author Sean Harvey <sean at silverstripe dot com>
@@ -229,6 +235,22 @@ class RequirementsChecker {
 		return ini_get('date.timezone') && in_array(ini_get('date.timezone'), timezone_identifiers_list());
 	}
 
+	public function getWebserverUrlRewritingResponse() {
+		if(function_exists('curl_init')) {
+			$ch = curl_init();
+			$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+			$url = sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($ch);
+			curl_close($ch);
+
+			return $response;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Determine if URL rewriting support is working on the webserver.
 	 * 
@@ -241,19 +263,8 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertWebserverUrlRewritingSupport() {
-		if(function_exists('curl_init')) {
-			$ch = curl_init();
-			$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-			$url = sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$response = curl_exec($ch);
-			curl_close($ch);
-
-			return preg_match('/test.php queryval: testvalue/', $response);
-		} else {
-			return false;
-		}
+		$response = $this->getWebserverUrlRewritingResponse();
+		return ($response) ? preg_match('/test.php queryval: testvalue/', $response) : false;
 	}
 
 }
@@ -355,7 +366,7 @@ echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_p
 echo $f->nl();
 
 echo $f->heading('Webserver configuration', 2);
-echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), '', false);
+echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), $r->getWebserverUrlRewritingResponse(), false);
 echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
