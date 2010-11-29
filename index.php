@@ -16,7 +16,6 @@ error_reporting(E_ALL);
  *   @todo URL rewrite check fails for some reason on Arvixe.
  *   This is a broken check, as there is a permission problem.
  * 
- * @todo Provide recommendations for assertions that fail
  * @todo Display single value assertions e.g. "Off" not "On" as a table with actual versus recommended values
  * 
  * @package ssreqcheck
@@ -371,7 +370,12 @@ echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_p
 echo $f->nl();
 
 echo $f->heading('Webserver configuration', 2);
-echo $f->showAssertion('URL rewrite support', $r->assertWebserverUrlRewritingSupport(), $r->getWebserverUrlRewritingResponse(), false, 'URL rewrite test failed');
+echo $f->showAssertion(
+	'URL rewrite support',
+	$r->assertWebserverUrlRewritingSupport(),
+	sprintf('URL rewrite test failed: "%s"', $r->getWebserverUrlRewritingResponse()),
+	false
+);
 echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
@@ -392,12 +396,14 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'can set additional include paths using set_include_path()',
 	$r->assertSetAdditionalIncludePaths('/test/path'),
-	'Additional paths cannot be set using set_include_path(). <a href="http://silverstripe.org/installing-silverstripe/show/12361">More information in silverstripe.org/forums</a>'
+	'Additional paths cannot be set using set_include_path(). '
+	. '<a href="http://silverstripe.org/installing-silverstripe/show/12361">More information in silverstripe.org/forums</a>'
 );
 echo $f->showAssertion(
 	'date.timezone option set and valid',
 	$r->assertPhpDateTimezoneSetAndValid(),
-	'date.timezone option needs to be set to your server timezone. See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this',
+	'date.timezone option needs to be set to your server timezone. '
+	. 'See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this',
 	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
 );
 echo $f->showAssertion(
