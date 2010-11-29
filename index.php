@@ -12,11 +12,7 @@ error_reporting(E_ALL);
  * - Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5), PHP 5.3.3
  * - Debian 5 "lenny": Apache 2.2.9 (mod_php5), PHP 5.2.6
  * - Ubuntu Server 10.10: Apache 2.2.16 (mod_php5), PHP 5.3.3
- * - Arvixe Red Hat Linux: Apache 2.2.16 (FastCGI), PHP 5.2.14
- *   @todo URL rewrite check fails for some reason on Arvixe.
- *   This is a broken check, as there is a permission problem.
- * 
- * @todo Display single value assertions e.g. "Off" not "On" as a table with actual versus recommended values
+ * - Arvixe Red Hat Linux: Apache 2.2.16 (CGI), PHP 5.2.14
  * 
  * @package ssreqcheck
  * @author Sean Harvey <sean at silverstripe dot com>
