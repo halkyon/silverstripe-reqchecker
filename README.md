@@ -2,8 +2,12 @@
 
 ## Introduction
 
-This script will check your server environment to make sure it is configured correctly
+A script which will check your server environment to make sure it is configured correctly
 for SilverStripe (http://silverstripe.org).
+
+## Requirements
+
+ * Existing PHP environment with webserver setup
 
 ## Using
 
@@ -23,5 +27,5 @@ for SilverStripe (http://silverstripe.org).
 
 ## Contact
 
- * Sean Harvey <sean at silverstripe dot com>
- * Twitter: halkyon
+ * Sean Harvey (sean@silverstripe.com)
+ * Twitter: [@halkyon](http://twitter.com/halkyon)
