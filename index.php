@@ -5,14 +5,7 @@ error_reporting(E_ALL);
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
  * 
- * Tested on the following environments:
- * 
- * - Windows 7 Professional x64: Apache 2.2.17 (mod_php5), PHP 5.3.3 VC9 TS
- * - Windows Server 2008 R2 Standard x64: IIS 7.5 (FastCGI), PHP 5.3.3 VC9 NTS
- * - Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5), PHP 5.3.3
- * - Debian 5 "lenny": Apache 2.2.9 (mod_php5), PHP 5.2.6
- * - Ubuntu Server 10.10: Apache 2.2.16 (mod_php5), PHP 5.3.3
- * - Arvixe Red Hat Linux: Apache 2.2.16 (CGI), PHP 5.2.14
+ * Refer to README.md file for more information.
  * 
  * @package ssreqcheck
  * @author Sean Harvey <sean at silverstripe dot com>
