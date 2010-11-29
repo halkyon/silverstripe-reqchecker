@@ -159,27 +159,22 @@ class RequirementsChecker {
 	}
 
 	/**
+	 * Get the URL used for testing webserver URL rewriting
+	 * @return string
+	 */
+	public function getWebserverUrlRewritingURL() {
+		$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
+	}
+
+	/**
 	 * Return the response of a test URL rewrite setup.
 	 * This will only work for Apache (.htaccess) and IIS 7.x (web.config).
-	 * 
-	 * @todo This doesn't work when PHP is running in CLI.
 	 * 
 	 * @return string Response text from request | false CURL not enabled
 	 */
 	public function getWebserverUrlRewritingResponse() {
-		if(function_exists('curl_init')) {
-			$ch = curl_init();
-			$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-			$url = sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			$response = curl_exec($ch);
-			curl_close($ch);
-
-			return $response;
-		} else {
-			return false;
-		}
+		return @file_get_contents($this->getWebserverUrlRewritingURL());
 	}
 
 	/**
@@ -331,7 +326,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	sprintf('URL rewrite test failed: "%s"', $r->getWebserverUrlRewritingResponse()),
+	sprintf('URL rewrite test failed. Please check <strong>%s</strong> in your browser directly"', $r->getWebserverUrlRewritingURL()),
 	false
 );
 echo $f->nl();
