@@ -436,7 +436,8 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'magic_quotes_gpc option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('magic_quotes_gpc'),
-	'magic_quotes_gpc option is deprecated. Please set it to <strong>Off</strong>'
+	'magic_quotes_gpc option is deprecated. Please set it to <strong>Off</strong>',
+	false
 );
 echo $f->showAssertion(
 	'register_globals option set to <strong>Off</strong>',
