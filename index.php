@@ -5,7 +5,7 @@ error_reporting(E_ALL);
  * Checks that the server environment meets minimum requirements for running
  * SilverStripe (http://silverstripe.org).
  * 
- * Tested in the following environments:
+ * Tested on the following environments:
  * 
  * - Windows 7 x64: Apache 2.2.17 (mod_php5), PHP 5.3.3 VC9 TS
  * - Windows Server 2008 R2 Standard: IIS 7.5 (FastCGI), PHP 5.3.3 VC9 NTS
