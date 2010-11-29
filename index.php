@@ -216,7 +216,7 @@ class RequirementsChecker {
 			// ASSUMPTION: UNIX based operating system with "uname" command
 			exec('uname -a', $output, $return_var);
 			if($return_var === 0) {
-				$value = trim($output);
+				$value = trim($output[0]);
 			}
 		}
 
