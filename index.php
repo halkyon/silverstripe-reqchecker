@@ -13,7 +13,7 @@ error_reporting(E_ALL);
 class RequirementsChecker {
 
 	/**
-	 * Check that a php.ini option is set to "<strong>Off</strong>"
+	 * Check that a php.ini option is set set to "Off".
 	 * ini_get() returns as <strong>Off</strong> settings as an empty string.
 	 * 
 	 * @param string $name Name of configuration setting
