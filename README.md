@@ -5,9 +5,22 @@
 A script which will check your server environment to make sure it is configured correctly
 for [SilverStripe](http://silverstripe.org).
 
+It has been tested on the following dedicated platforms:
+
+ * Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5), PHP 5.3.3
+ * Windows 7 Professional x64: Apache 2.2.17 VC9 (mod_php5 SAPI), PHP 5.3.3 VC9 TS
+ * Windows Server 2008 R2 Standard x64: IIS 7.5 (FastCGI SAPI), PHP 5.3.3 VC9 NTS
+ * Debian GNU/Linux "lenny": Apache 2.2.9 (mod_php5 SAPI), PHP 5.2.6
+ * Ubuntu Server 10.10: Apache 2.2.16 (mod_php5 SAPI), PHP 5.3.3
+
+And the following shared host platforms:
+
+ * Arvixe Red Hat Linux: Apache 2.2.16 (CGI SAPI), PHP 5.2.14
+
 ## Requirements
 
- * Existing PHP 5 environment with webserver setup
+ * Apache or IIS 7.x webserver
+ * PHP 5.2.0+
 
 ## Using
 
