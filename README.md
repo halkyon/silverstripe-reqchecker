@@ -34,10 +34,6 @@ and on the following shared hosts:
  * Environment specific (dev/prod) checks, e.g. production environment has 500 and 404 custom error pages setup correctly, and display_errors = Off in production
  * Display "Download and install SilverStripe" link at bottom of page if all checks pass (or only warnings shown)
 
-## Known issues
-
- * URL rewrite check fails on Arvixe
-
 ## Contact
 
  * Sean Harvey (sean@silverstripe.com)
