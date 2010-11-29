@@ -13,59 +13,6 @@ error_reporting(E_ALL);
 class RequirementsChecker {
 
 	/**
-	 * Cached PHP information, populated on instantiation of this class.
-	 * @var array
-	 */
-	protected $phpInfo;
-
-	public function __construct() {
-		$this->getPhpInfo();
-	}
-
-	/**
-	 * Retrieves PHP information from phpinfo() into an array.
-	 * @todo This doesn't work when PHP is running in CLI.
-	 * 
-	 * @author code at adspeed dot com 09-Dec-2005 11:31
-	 * @see http://php.net/manual/en/function.phpinfo.php
-	 * @return array
-	 */
-	public function getPhpInfo() {
-		if($this->phpInfo) return $this->phpInfo;
-
-		ob_start();
-		phpinfo();
-		$s = ob_get_contents();
-		ob_end_clean();
-		$s = strip_tags($s, '<h2><th><td>');
-		$s = preg_replace('/<th[^>]*>([^<]+)<\/th>/', "<info>\\1</info>", $s);
-		$s = preg_replace('/<td[^>]*>([^<]+)<\/td>/', "<info>\\1</info>", $s);
-		$vTmp = preg_split('/(<h2>[^<]+<\/h2>)/',$s, -1, PREG_SPLIT_DELIM_CAPTURE);
-		$data = array();
-
-		for($i = 1; $i < count($vTmp); $i++) {
-			if(preg_match('/<h2>([^<]+)<\/h2>/', $vTmp[$i], $vMat)) {
-				$vName = trim($vMat[1]);
-				$vTmp2 = explode("\n", $vTmp[$i+1]);
-				foreach($vTmp2 as $vOne) {
-					$vPat = '<info>([^<]+)<\/info>';
-					$vPat3 = "/$vPat\s*$vPat\s*$vPat/";
-					$vPat2 = "/$vPat\s*$vPat/";
-					if(preg_match($vPat3, $vOne, $vMat)) { // 3cols
-						$data[$vName][trim($vMat[1])] = array(trim($vMat[2]), trim($vMat[3]));
-					} elseif(preg_match($vPat2, $vOne, $vMat)) { // 2cols
-						$data[$vName][trim($vMat[1])] = trim($vMat[2]);
-					}
-				}
-			}
-		}
-
-		$this->phpInfo = $data;
-
-		return $this->phpInfo;
-	}
-
-	/**
 	 * Check that a php.ini option is set to "<strong>Off</strong>"
 	 * ini_get() returns as <strong>Off</strong> settings as an empty string.
 	 * 
@@ -109,31 +56,19 @@ class RequirementsChecker {
 	/**
 	 * Try to find the version of the given PHP extension.
 	 * 
+	 * phpversion() doesn't always return extension versions, so specific
+	 * checks need to be done for extensions like GD.
+	 * 
 	 * @param string $name Name of extension, e.g. "gd"
-	 * @return string|false String of version, boolean FALSE on failure
+	 * @return string String of version
 	 */
 	public function getPhpExtensionVersion($name) {
-		$info = $this->getPhpInfo();
-		$version = false;
-
-		if(isset($info[$name])) {
-			// find a key with "version" text and get that value
-			$found = '';
-			foreach($info[$name] as $key => $value) {
-				if(preg_match('/version/i', $key)) {
-					$found = $key;
-					break;
-				}
-			}
-
-			if(isset($info[$name][$found])) {
-				preg_match('/\d+\.\d+(?:\.\d+)?/', $info[$name][$found], $matches);
-				if(isset($matches[0])) $version = $matches[0];
-				elseif(is_numeric($info[$name][$found])) $version = $info[$name][$found];
-			}
+		$version = phpversion($name);
+		if(!$version && $name == 'gd') {
+			$info = function_exists('gd_info') ? gd_info() : array();
+			$version = isset($info['GD Version']) ? $info['GD Version'] : '';
 		}
-
-		return $version;
+		return preg_replace('%[^0-9\.]%', '', $version);
 	}
 
 	/**
@@ -143,7 +78,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertMinimumPhpExtensionVersion($name, $version) {
-		return version_compare($version, $this->getPhpExtensionVersion($name, $version), '<=');
+		return version_compare($version, $this->getPhpExtensionVersion($name), '<=');
 	}
 
 	/**
@@ -301,7 +236,6 @@ class RequirementsFormatter {
 	 */
 	public function showAssertion($assertion, $result, $message, $fatal = true) {
 		$status = ($result == true) ? 'passed' : ($fatal ? 'failed' : 'warning');
-		
 		if($result == true) {
 			$text = strtoupper($status) . ': ' . $assertion;
 		} else {
@@ -374,11 +308,15 @@ echo $f->showAssertion(
 echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
-echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
+echo $f->showAssertion(
+	sprintf('PHP version at least <strong>5.2.0</strong> (%s)', PHP_VERSION),
+	$r->assertMinimumPhpVersion('5.2.0'),
+	PHP_VERSION
+);
 echo $f->nl();
 
 echo $f->showAssertion(
-	'memory_limit option at least <strong>64M</strong>',
+	sprintf('memory_limit option at least <strong>64M</strong> (%s)', ini_get('memory_limit')),
 	$r->assertMinimumPhpMemory('64M'),
 	sprintf('You only have %s memory. SilverStripe requires at least <strong>64M</strong>', ini_get('memory_limit')),
 	false
@@ -395,7 +333,7 @@ echo $f->showAssertion(
 	. '<a href="http://silverstripe.org/installing-silverstripe/show/12361">More information in silverstripe.org/forums</a>'
 );
 echo $f->showAssertion(
-	'date.timezone option set and valid',
+	sprintf('date.timezone option set and valid (%s)', ini_get('date.timezone')),
 	$r->assertPhpDateTimezoneSetAndValid(),
 	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong> based on system timezone', @date_default_timezone_get()),
 	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
@@ -451,7 +389,7 @@ echo $f->showAssertion(
 	'gd extension not loaded'
 );
 echo $f->showAssertion(
-	'gd extension version at least <strong>2.0</strong>',
+	sprintf('gd extension version at least <strong>2.0</strong> (%s)', $r->getPhpExtensionVersion('gd')),
 	$r->assertMinimumPhpExtensionVersion('gd', '2.0'),
 	'gd extension is too old. SilverStripe requires at least gd version 2.0'
 );
