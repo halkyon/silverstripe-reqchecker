@@ -196,6 +196,35 @@ class RequirementsChecker {
 		return ($response) ? preg_match('/test.php queryval: testvalue/', $response) : false;
 	}
 
+	/**
+	 * Try to get system information using a command line utility.
+	 * @return string System information summary
+	 */
+	public function getSystemInformation() {
+		$value = '';
+		if(preg_match('/WIN/', PHP_OS)) {
+			exec('systeminfo', $output, $return_var);
+			if($return_var === 0) {
+				foreach($output as $info) {
+					if(preg_match('/OS/', $info)) {
+						$value .= trim(substr($info, 25)) . ' ';
+					}
+				}
+			}
+			$value = trim($value);
+		} else {
+			// ASSUMPTION: UNIX based operating system with "uname" command
+			exec('uname -a', $output, $return_var);
+			if($return_var === 0) {
+				$value = trim($output);
+			}
+		}
+
+		if(!$value) $value = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
+
+		return $value;
+	}
+
 }
 /**
  * Simple abstraction class which formats text based on whether PHP is running
@@ -291,9 +320,9 @@ if(isset($_SERVER['HTTP_HOST'])) {
 echo $f->heading('SilverStripe Requirements Checker', 1);
 
 echo $f->heading('System information', 2);
-echo $f->show(sprintf('System: %s', isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown'));
-echo $f->show(sprintf('Server Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
-echo $f->show(sprintf('Server API: %s', php_sapi_name()));
+echo $f->show(sprintf('System: %s', $r->getSystemInformation()));
+echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
+echo $f->show(sprintf('Webserver API: %s', php_sapi_name()));
 echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
 echo $f->nl();
