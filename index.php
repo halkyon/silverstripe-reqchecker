@@ -243,7 +243,8 @@ class RequirementsChecker {
 	public function assertWebserverUrlRewritingSupport() {
 		if(function_exists('curl_init')) {
 			$ch = curl_init();
-			$url = sprintf('http://127.0.0.1/%s/rewritetest/test-url?testquery=testvalue', dirname($_SERVER['SCRIPT_NAME']));
+			$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
+			$url = sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, dirname($_SERVER['SCRIPT_NAME']));
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			$response = curl_exec($ch);
