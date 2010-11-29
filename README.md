@@ -33,7 +33,8 @@ You can also run it on the command line. For example:
 
 ## Known issues
 
- * URL rewrite check fails when placing check files under an existing folder that already has an .htaccess file with rewrite rules and engine turned on (need to find a way to override the existing rewrite rules)
+ * file_get_contents() will fail on some hosts because they disable URL fetching. Workaround
+   needs to be put in place to use fsockopen() instead so there are no cURL dependencies
  * URL rewrite check fails on command line unless you run the php script from the webroot
 
 This will pass:
