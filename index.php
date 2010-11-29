@@ -322,7 +322,7 @@ echo $f->heading('SilverStripe Requirements Checker', 1);
 echo $f->heading('System information', 2);
 echo $f->show(sprintf('System: %s', $r->getSystemInformation()));
 echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
-echo $f->show(sprintf('Webserver API: %s', php_sapi_name()));
+echo $f->show(sprintf('SAPI: %s', php_sapi_name()));
 echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
 echo $f->nl();
