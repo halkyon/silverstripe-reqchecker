@@ -7,7 +7,7 @@ for SilverStripe (http://silverstripe.org).
 
 ## Requirements
 
- * Existing PHP environment with webserver setup
+ * Existing PHP 5 environment with webserver setup
 
 ## Using
 
