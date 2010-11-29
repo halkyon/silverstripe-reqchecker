@@ -171,6 +171,8 @@ class RequirementsChecker {
 	 * Return the response of a test URL rewrite setup.
 	 * This will only work for Apache (.htaccess) and IIS 7.x (web.config).
 	 * 
+	 * @todo Use fsockopen() if file_get_contents() does not work (some hosts disable URL file_get_contents())
+	 * 
 	 * @return string Response text from request | false CURL not enabled
 	 */
 	public function getWebserverUrlRewritingResponse() {
@@ -326,7 +328,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	sprintf('URL rewrite test failed. Please check <strong>%s</strong> in your browser directly', $r->getWebserverUrlRewritingURL()),
+	sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
 	false
 );
 echo $f->nl();
