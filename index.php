@@ -419,12 +419,12 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'safe_mode option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('safe_mode'),
-	'safe_mode is deprecated. Please set it to <strong>Off</strong>'
+	'safe_mode option is deprecated. Please set it to <strong>Off</strong>'
 );
 echo $f->showAssertion(
 	'allow_call_time_pass_reference option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('allow_call_time_pass_reference'),
-	'allow_call_time_pass_reference is deprecated. Please set it to <strong>Off</strong>',
+	'allow_call_time_pass_reference option is deprecated. Please set it to <strong>Off</strong>',
 	false
 );
 echo $f->showAssertion(
@@ -436,12 +436,12 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'magic_quotes_gpc option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('magic_quotes_gpc'),
-	'magic_quotes_gpc is deprecated. Please set it to <strong>Off</strong>'
+	'magic_quotes_gpc option is deprecated. Please set it to <strong>Off</strong>'
 );
 echo $f->showAssertion(
 	'register_globals option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('register_globals'),
-	'register_globals is deprecated. Please set it to <strong>Off</strong>'
+	'register_globals option is deprecated. Please set it to <strong>Off</strong>'
 );
 echo $f->nl();
 
