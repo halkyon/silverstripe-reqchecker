@@ -430,7 +430,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'short_open_tag option option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('short_open_tag'),
-	'short_open_tag should be set to <strong>Off</strong>',
+	'short_open_tag option should be set to <strong>Off</strong>',
 	false
 );
 echo $f->showAssertion(
