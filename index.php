@@ -359,7 +359,10 @@ echo $f->nl();
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion('PHP version at least <strong>5.2.0</strong>', $r->assertMinimumPhpVersion('5.2.0'), PHP_VERSION);
 echo $f->nl();
-echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'));
+
+echo $f->showAssertion('memory_limit option at least <strong>64M</strong>', $r->assertMinimumPhpMemory('64M'), ini_get('memory_limit'), false);
+echo $f->showAssertion('can increase memory_limit option by 64M using ini_set()', $r->assertIncreasePhpMemory('64M'));
+echo $f->showAssertion('can set additional include paths using set_include_path()', $r->assertSetAdditionalIncludePaths('/test/path'));
 echo $f->showAssertion('date.timezone option set and valid', $r->assertPhpDateTimezoneSetAndValid(), ini_get('date.timezone'));
 echo $f->showAssertion('asp_tags option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('asp_tags'), ini_get('asp_tags') ? 'On' : '');
 echo $f->showAssertion('safe_mode option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('safe_mode'), ini_get('safe_mode') ? 'On' : '');
@@ -368,10 +371,6 @@ echo $f->showAssertion('short_open_tag option option set to <strong>Off</strong>
 echo $f->showAssertion('magic_quotes_gpc option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('magic_quotes_gpc'), ini_get('magic_quotes_gpc') ? 'On' : '');
 echo $f->showAssertion('register_globals option set to <strong>Off</strong>', $r->assertPhpIniOptionOff('register_globals'), ini_get('register_globals') ? 'On' : '');
 echo $f->showAssertion('session.auto_start option set to <strong><strong>Off</strong></strong>', $r->assertPhpIniOptionOff('session.auto_start'), ini_get('session.auto_start') ? 'On' : '');
-echo $f->nl();
-
-echo $f->showAssertion('can increase memory_limit option by 64M using ini_set()', $r->assertIncreasePhpMemory('64M'));
-echo $f->showAssertion('can set additional include paths using set_include_path()', $r->assertSetAdditionalIncludePaths('/test/path'));
 echo $f->nl();
 
 echo $f->showAssertion('curl extension loaded', $r->assertPhpExtensionLoaded('curl'));
