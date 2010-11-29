@@ -234,6 +234,14 @@ class RequirementsChecker {
 		return ini_get('date.timezone') && in_array(ini_get('date.timezone'), timezone_identifiers_list());
 	}
 
+	/**
+	 * Return the response of a test URL rewrite setup.
+	 * This will only work for Apache (.htaccess) and IIS 7.x (web.config).
+	 * 
+	 * @todo This doesn't work when PHP is running in CLI.
+	 * 
+	 * @return string Response text from request | false CURL not enabled
+	 */
 	public function getWebserverUrlRewritingResponse() {
 		if(function_exists('curl_init')) {
 			$ch = curl_init();
@@ -256,8 +264,6 @@ class RequirementsChecker {
 	 * Rather than doing specific checks for Apache or IIS, this method will
 	 * check the response of a specific test URL in order to make a determination
 	 * of URL rewriting is working or not.
-	 * 
-	 * @todo This doesn't work when PHP is running in CLI.
 	 * 
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
@@ -402,8 +408,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'date.timezone option set and valid',
 	$r->assertPhpDateTimezoneSetAndValid(),
-	'date.timezone option needs to be set to your server timezone. '
-	. 'See <a href="http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone">php.net information</a> on how to do this',
+	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed "%s" based on system timezone', @date_default_timezone_get()),
 	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
 );
 echo $f->showAssertion(
