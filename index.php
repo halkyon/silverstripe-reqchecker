@@ -324,7 +324,8 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'can increase memory_limit option by 64M using ini_set()',
 	$r->assertIncreasePhpMemory('64M'),
-	'Unable to increase memory by 64M. Please make sure you set at least 64M for PHP memory_limit option'
+	'Unable to increase memory by 64M. Please make sure you set at least <strong>64M</strong> for PHP memory_limit option',
+	!$r->assertMinimumPhpMemory('64M')
 );
 echo $f->showAssertion(
 	'can set additional include paths using set_include_path()',
