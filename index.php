@@ -159,6 +159,22 @@ class RequirementsChecker {
 	}
 
 	/**
+	 * Return a PHP opcache extension that may be loaded.
+	 * @return string Name of opcode cacher and version number (if available)
+	 */
+	public function getPhpOpcodeCacher() {
+		if($this->assertPhpExtensionLoaded('xcache') && ini_get('xcache.cacher')) return trim('XCache ' . $this->getPhpExtensionVersion('xcache'));
+		elseif($this->assertPhpExtensionLoaded('wincache') && ini_get('wincache.ocenabled')) return trim('WinCache ' . $this->getPhpExtensionVersion('wincache'));
+		elseif($this->assertPhpExtensionLoaded('eaccelerator') && ini.get('eaccelerator.enable')) return trim('eAccelerator ' . $this->getPhpExtensionVersion('eaccelerator'));
+		elseif($this->assertPhpExtensionLoaded('apc') && ini_get('apc.enabled')) return trim('APC ' . $this->getPhpExtensionVersion('apc'));
+		else return false;
+	}
+
+	public function assertPhpOpcodeCacherEnabled() {
+		return $this->getPhpOpcodeCacher();
+	}
+
+	/**
 	 * Get the URL used for testing webserver URL rewriting
 	 * @return string
 	 */
@@ -481,6 +497,15 @@ echo $f->showAssertion(
 	$r->assertPhpExtensionLoaded('xml'),
 	'xml extension not loaded'
 );
+echo $f->nl();
+
+echo $f->showAssertion(
+	sprintf('opcode cacher installed (%s)', $r->getPhpOpcodeCacher()),
+	$r->assertPhpOpcodeCacherEnabled(),
+	'no opcode cacher is enabled. It is highly recommend you install either XCache, WinCache, APC, or eAccelerator',
+	false
+);
+
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;

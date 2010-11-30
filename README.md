@@ -43,7 +43,6 @@ You can also run it on the command line. For example:
  * Database checks - by default, MySQL version
  * Environment specific (dev/prod) checks, e.g. production environment has 500 and 404 custom error pages setup correctly, and display_errors = Off in production
  * Display "Download and install SilverStripe" link at bottom of page if all checks pass (or only warnings shown)
- * Check for opcode cacher being enabled (xcache, zend optimizer, wincache etc), warning if none enabled
  * Check temp path available, and can write to it - show location of found temp path
 
 ## Contact
