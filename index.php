@@ -163,20 +163,38 @@ class RequirementsChecker {
 	 * @return string
 	 */
 	public function getWebserverUrlRewritingURL() {
-		$host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost';
-		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $host, trim(dirname($_SERVER['SCRIPT_NAME']), '/'));
+		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $_SERVER['HTTP_HOST'], trim(dirname($_SERVER['SCRIPT_NAME']), '/'));
 	}
 
 	/**
 	 * Return the response of a test URL rewrite setup.
 	 * This will only work for Apache (.htaccess) and IIS 7.x (web.config).
+	 * This uses fsockopen() in the event that file_get_contents() has been disabled.
 	 * 
-	 * @todo Use fsockopen() if file_get_contents() does not work (some hosts disable URL file_get_contents())
+	 * Does not work when PHP is running in CLI.
 	 * 
-	 * @return string Response text from request | false CURL not enabled
+	 * @return string Response text from request
 	 */
 	public function getWebserverUrlRewritingResponse() {
-		return @file_get_contents($this->getWebserverUrlRewritingURL());
+		$response = @file_get_contents($this->getWebserverUrlRewritingURL());
+		if(!$response) {
+			$response = '';
+			$url = parse_url($this->getWebserverUrlRewritingURL());
+			$fp = fsockopen($url['host'], $_SERVER['SERVER_PORT'], $errno, $errstr);
+			if(!$fp) {
+				return sprintf("ERROR: %s (%s)", $errstr, $errno);
+			} else {
+				$out = sprintf('GET %s?%s HTTP/1.1', $url['path'], $url['query']) . PHP_EOL;
+				$out .= sprintf('Host: %s:%d', $url['host'], $_SERVER['SERVER_PORT']) . PHP_EOL;
+				$out .= 'Connection: Close' . PHP_EOL . PHP_EOL;
+				fwrite($fp, $out);
+				while(!feof($fp)) {
+					$response .= fgets($fp, 8192);
+				}
+				fclose($fp);
+			}
+		}
+		return $response;
 	}
 
 	/**
@@ -318,20 +336,22 @@ echo $f->heading('SilverStripe Requirements Checker', 1);
 
 echo $f->heading('System information', 2);
 echo $f->show(sprintf('System: %s', $r->getSystemInformation()));
-echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
+if(isset($_SERVER['HTTP_HOST'])) echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
 echo $f->show(sprintf('SAPI: %s', php_sapi_name()));
 echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
 echo $f->nl();
 
-echo $f->heading('Webserver configuration', 2);
-echo $f->showAssertion(
-	'URL rewrite support',
-	$r->assertWebserverUrlRewritingSupport(),
-	sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
-	false
-);
-echo $f->nl();
+if(isset($_SERVER['HTTP_HOST'])) {
+	echo $f->heading('Webserver configuration', 2);
+	echo $f->showAssertion(
+		'URL rewrite support',
+		$r->assertWebserverUrlRewritingSupport(),
+		sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
+		false
+	);
+	echo $f->nl();
+}
 
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion(
