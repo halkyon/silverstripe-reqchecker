@@ -31,9 +31,7 @@ It has also been tested on the following shared web hosts:
 
 To change permissions, do something like this:
 
-[code]
-chown www-data /var/www/ssreqcheck/rewritetest/.htaccess
-[/code]
+	chown www-data /var/www/ssreqcheck/rewritetest/.htaccess
 
 You can also run the checker on the command line. For example:
 
