@@ -32,6 +32,8 @@ You can also run it on the command line. For example:
 
 	php /var/www/ssreqcheck/index.php
 
+Caution: URL rewrite checks are *not* performed when running the checker from command line.
+
 ## Known issues
 
  * Some hosts require a RewriteBase directive in testwrite/.htaccess or rewrite test fails
