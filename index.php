@@ -200,9 +200,7 @@ class RequirementsChecker {
 	}
 
 	/**
-	 * Checks the default PHP temp path is writable. Additionally, check that
-	 * a new directory can be created at the temp path as well.
-	 * 
+	 * Check that a new directory can be created at the default PHP temp path.
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertDefaultPhpTempPathWritable() {
