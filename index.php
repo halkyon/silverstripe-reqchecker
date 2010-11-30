@@ -505,8 +505,6 @@ echo $f->showAssertion(
 	false
 );
 
-echo $f->showAssertion(
-
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;
 	echo '</html>';
