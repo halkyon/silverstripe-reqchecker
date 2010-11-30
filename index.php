@@ -426,8 +426,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	'magic_quotes_gpc option set to <strong>Off</strong>',
 	$r->assertPhpIniOptionOff('magic_quotes_gpc'),
-	'magic_quotes_gpc option is deprecated. Please set it to <strong>Off</strong>',
-	false
+	'magic_quotes_gpc option is deprecated. This can cause issues with cookies, <a href="http://silverstripe.org/blog-module-forum/show/15011">see here</a> for more information. Please set it to <strong>Off</strong>'
 );
 echo $f->showAssertion(
 	'register_globals option set to <strong>Off</strong>',
@@ -502,10 +501,11 @@ echo $f->nl();
 echo $f->showAssertion(
 	sprintf('opcode cacher extension installed (%s)', $r->getPhpOpcodeCacher()),
 	$r->assertPhpOpcodeCacherEnabled(),
-	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable XCache, WinCache, APC, or eAccelerator',
+	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable either XCache, WinCache, APC, or eAccelerator',
 	false
 );
 
+echo $f->showAssertion(
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '</body>' . PHP_EOL;
