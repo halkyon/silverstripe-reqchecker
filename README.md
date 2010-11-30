@@ -29,7 +29,13 @@ It has also been tested on the following shared web hosts:
  2. Open a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
  3. If using Apache, make sure the *.htaccess* file inside the *rewritetest* directory is owned by the webserver user so that PHP can write to it. This is used for testing URL rewriting is working correctly by writing a correct *RewriteBase* directive
 
-You can also run it on the command line. For example:
+To change permissions, do something like this:
+
+[code]
+chown www-data /var/www/ssreqcheck/rewritetest/.htaccess
+[/code]
+
+You can also run the checker on the command line. For example:
 
 	php /var/www/ssreqcheck/index.php
 
