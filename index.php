@@ -260,7 +260,31 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertWebserverUrlRewritingSupport() {
+		$path = 'rewritetest/.htaccess';
+		$fh = fopen($path, 'r');
+		$contents = fread($fh, filesize($path));
+		fclose($fh);
+
+		// put a RewriteBase in .htaccess file temporarily for the test
+		if(is_writable($path) && strpos($contents, 'RewriteBase') === false) {
+			$newcontents = str_replace(
+				'RewriteEngine On',
+				'RewriteEngine On' . PHP_EOL . sprintf('RewriteBase %s', dirname($_SERVER['SCRIPT_NAME']) . '/rewritetest'), $contents
+			);
+			$fh = fopen($path, 'wb');
+			fwrite($fh, $newcontents);
+			fclose($fh);
+		}
+
 		$response = $this->getWebserverUrlRewritingResponse();
+
+		// restore .htaccess back to the original
+		if(is_writable($path)) {
+			$fh = fopen($path, 'wb');
+			fwrite($fh, $contents);
+			fclose($fh);
+		}
+
 		return ($response) ? preg_match('/test.php queryval: testvalue/', $response) : false;
 	}
 
