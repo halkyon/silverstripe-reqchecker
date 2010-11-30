@@ -21,6 +21,7 @@ and on the following shared hosts:
 ## Requirements
 
  * Apache or IIS 7.x webserver
+    (nginx and lighttpd may work, but not tested)
  * PHP 5.2.0+
 
 ## Using
