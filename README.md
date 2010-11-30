@@ -27,7 +27,7 @@ It has also been tested on the following shared web hosts:
 
  1. Unpack the source files to somewhere in your server webroot, e.g. /var/www/ssreqcheck
  2. Open a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
- 3. If using Apache, make sure the rewritetest/.htaccess file is owned by the webserver user so that it can be written to. This is used for testing URL rewriting is working correctly
+ 3. If using Apache, make sure the *.htaccess* file inside the *rewritetest* directory is owned by the webserver user so that PHP can write to it. This is used for testing URL rewriting is working correctly by writing a correct *RewriteBase* directive
 
 You can also run it on the command line. For example:
 
