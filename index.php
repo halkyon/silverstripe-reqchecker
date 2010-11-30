@@ -500,9 +500,9 @@ echo $f->showAssertion(
 echo $f->nl();
 
 echo $f->showAssertion(
-	sprintf('opcode cacher installed (%s)', $r->getPhpOpcodeCacher()),
+	sprintf('opcode cacher extension installed (%s)', $r->getPhpOpcodeCacher()),
 	$r->assertPhpOpcodeCacherEnabled(),
-	'no opcode cacher is installed and enabled. It is highly recommend you install either XCache, WinCache, APC, or eAccelerator',
+	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable XCache, WinCache, APC, or eAccelerator',
 	false
 );
 
