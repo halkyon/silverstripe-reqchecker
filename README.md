@@ -27,16 +27,13 @@ It has also been tested on the following shared web hosts:
 
  1. Unpack the source files to somewhere in your server webroot, e.g. /var/www/ssreqcheck
  2. Open a browser and point to that file, e.g. http://localhost/ssreqcheck/index.php
+ 3. If using Apache, make sure the rewritetest/.htaccess file is owned by the webserver user so that it can be written to. This is used for testing URL rewriting is working correctly
 
 You can also run it on the command line. For example:
 
 	php /var/www/ssreqcheck/index.php
 
 *Caution: Webserver checks, including URL rewrite tests are not performed when running from the command line.*
-
-## Known issues
-
- * Some hosts require a RewriteBase directive in testwrite/.htaccess or rewrite test fails
 
 ## Future enhancements
 
