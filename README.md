@@ -7,7 +7,7 @@ for [SilverStripe CMS / Framework](http://silverstripe.org).
 
 It has been tested on the following dedicated platforms:
 
- * Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5), PHP 5.3.3
+ * Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5 SAPI), PHP 5.3.3
  * Windows 7 Professional x64: Apache 2.2.17 VC9 (mod_php5 SAPI), PHP 5.3.3 VC9 TS
  * Windows Server 2008 R2 Standard x64: IIS 7.5 (FastCGI SAPI), PHP 5.3.3 VC9 NTS
  * Debian GNU/Linux "lenny": Apache 2.2.9 (mod_php5 SAPI), PHP 5.2.6

@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 
 /**
- * Checks that the server environment meets minimum requirements for running
- * SilverStripe (http://silverstripe.org).
+ * Checks that the server environment is up to scratch for running
+ * SilverStripe CMS / Framework (http://silverstripe.org).
  * 
  * Refer to README.md file for more information.
  * 
