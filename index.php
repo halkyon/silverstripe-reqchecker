@@ -170,8 +170,49 @@ class RequirementsChecker {
 		else return false;
 	}
 
+	/**
+	 * Check that a PHP opcode cacher is installed, and enabled.
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
 	public function assertPhpOpcodeCacherEnabled() {
 		return $this->getPhpOpcodeCacher();
+	}
+
+	/**
+	 * Return the default temp path PHP uses to store temporary files.
+	 * Uses sys_get_temp_dir() if available (PHP 5.2.1+), falling back
+	 * to directory name of temporary file created using tempnam()
+	 * 
+	 * @return string Path of temp path | FALSE cannot find path
+	 */
+	public function getDefaultPhpTempPath() {
+		$path = function_exists('sys_get_temp_dir') ? sys_get_temp_dir() : false;
+		if(!$path) $path = dirname(tempnam('asdf123nonexistantdirectory', 'foo'));
+		return $path;
+	}
+
+	/**
+	 * Check there is a default PHP temp path available.
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertDefaultPhpTempPath() {
+		return $this->getDefaultPhpTempPath();
+	}
+
+	/**
+	 * Checks the default PHP temp path is writable. Additionally, check that
+	 * a new directory can be created at the temp path as well.
+	 * 
+	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 */
+	public function assertDefaultPhpTempPathWritable() {
+		$result = false;
+		if(is_writable($this->getDefaultPhpTempPath())) {
+			$newDirPath = $this->getDefaultPhpTempPath() . DIRECTORY_SEPARATOR . 'ssreqcheck-test';
+			$result = mkdir($newDirPath);
+			if($result) rmdir($newDirPath);
+		}
+		return $result;
 	}
 
 	/**
@@ -502,6 +543,20 @@ echo $f->showAssertion(
 	sprintf('opcode cacher extension installed (%s)', $r->getPhpOpcodeCacher()),
 	$r->assertPhpOpcodeCacherEnabled(),
 	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable either XCache, WinCache, APC, or eAccelerator',
+	false
+);
+echo $f->nl();
+
+echo $f->showAssertion(
+	sprintf('default temp path is accessible (%s)', $r->getDefaultPhpTempPath()),
+	$r->assertDefaultPhpTempPath(),
+	'no default temp path found. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with webserver user write permissions',
+	false
+);
+if($r->getDefaultPhpTempPath()) echo $f->showAssertion(
+	'default temp path is writable, and new directories can be created',
+	$r->assertDefaultPhpTempPathWritable(),
+	'default temp path is not writable. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with webserver user write permissions',
 	false
 );
 
