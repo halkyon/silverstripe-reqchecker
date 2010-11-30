@@ -207,11 +207,9 @@ class RequirementsChecker {
 	 */
 	public function assertDefaultPhpTempPathWritable() {
 		$result = false;
-		if(is_writable($this->getDefaultPhpTempPath())) {
-			$newDirPath = $this->getDefaultPhpTempPath() . DIRECTORY_SEPARATOR . 'ssreqcheck-test';
-			$result = mkdir($newDirPath);
-			if($result) rmdir($newDirPath);
-		}
+		$path = $this->getDefaultPhpTempPath() . DIRECTORY_SEPARATOR . 'ssreqcheck-test';
+		$result = mkdir($path);
+		if($result) rmdir($path);
 		return $result;
 	}
 
