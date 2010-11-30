@@ -32,7 +32,7 @@ You can also run it on the command line. For example:
 
 	php /var/www/ssreqcheck/index.php
 
-*Caution: URL rewrite checks are not performed when running the checker from command line.*
+*Caution: Webserver checks, including URL rewrite tests are not performed when running from the from command line.*
 
 ## Known issues
 
