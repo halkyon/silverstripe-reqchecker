@@ -13,15 +13,14 @@ It has been tested on the following dedicated platforms:
  * Debian GNU/Linux "lenny": Apache 2.2.9 (mod_php5 SAPI), PHP 5.2.6
  * Ubuntu Server 10.10: Apache 2.2.16 (mod_php5 SAPI), PHP 5.3.3
 
-and on the following shared hosts:
+It has also been tested on the following shared web hosts:
 
  * Arvixe Red Hat Linux: Apache 2.2.16 (CGI SAPI), PHP 5.2.14
  * 1&1 Internet AG: Apache (CGI SAPI), PHP 5.2.14
 
 ## Requirements
 
- * Apache or IIS 7.x webserver
-    (nginx and lighttpd may work, but not tested)
+ * Apache or IIS 7.x webserver (nginx and lighttpd may work, but not tested)
  * PHP 5.2.0+
 
 ## Using
@@ -36,17 +35,6 @@ You can also run it on the command line. For example:
 ## Known issues
 
  * Some hosts require a RewriteBase directive in testwrite/.htaccess or rewrite test fails
- * file_get_contents() will fail on some hosts because they disable URL fetching. Workaround
-   needs to be put in place to use fsockopen() instead so there are no cURL dependencies
- * URL rewrite check fails on command line unless you run the php script from the webroot
-
-This will pass:
-
-	cd /var/www; php ssreqcheck/index.php
-
-This will fail:
-
-	php /var/www/ssreqcheck/index.php
 
 ## Future enhancements
 
