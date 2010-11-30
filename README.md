@@ -2,7 +2,7 @@
 
 ## Introduction
 
-A script which will check your server environment to make sure it is configured correctly
+This is a script which will check your server environment to make sure it is configured correctly
 for [SilverStripe CMS / Framework](http://silverstripe.org).
 
 It has been tested on the following dedicated platforms:
@@ -31,6 +31,8 @@ It has also been tested on the following shared web hosts:
 You can also run it on the command line. For example:
 
 	php /var/www/ssreqcheck/index.php
+
+*Caution: Webserver checks, including URL rewrite tests are not performed when running from the command line.*
 
 ## Known issues
 
