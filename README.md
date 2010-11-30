@@ -34,6 +34,7 @@ You can also run it on the command line. For example:
 
 ## Known issues
 
+ * Some hosts require a RewriteBase directive in testwrite/.htaccess or rewrite test fails
  * file_get_contents() will fail on some hosts because they disable URL fetching. Workaround
    needs to be put in place to use fsockopen() instead so there are no cURL dependencies
  * URL rewrite check fails on command line unless you run the php script from the webroot
