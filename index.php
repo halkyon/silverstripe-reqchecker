@@ -398,7 +398,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	sprintf('date.timezone option set and valid (%s)', ini_get('date.timezone')),
 	$r->assertPhpDateTimezoneSetAndValid(),
-	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong> based on system timezone', @date_default_timezone_get()),
+	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong>, but it\'s not safe to rely on the system timezone', @date_default_timezone_get()),
 	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
 );
 echo $f->showAssertion(
