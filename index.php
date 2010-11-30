@@ -550,7 +550,7 @@ echo $f->showAssertion(
 	false
 );
 if($r->getDefaultPhpTempPath()) echo $f->showAssertion(
-	'default temp path is writable, and new directories can be created',
+	'default temp path is writable, new directories can be created',
 	$r->assertDefaultPhpTempPathWritable(),
 	'default temp path is not writable, new directories cannot be created. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with webserver user write permissions',
 	false
