@@ -16,6 +16,7 @@ It has been tested on the following dedicated platforms:
 and on the following shared hosts:
 
  * Arvixe Red Hat Linux: Apache 2.2.16 (CGI SAPI), PHP 5.2.14
+ * 1&1 Internet AG: Apache (CGI SAPI), PHP 5.2.14
 
 ## Requirements
 
