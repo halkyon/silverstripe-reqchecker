@@ -293,7 +293,7 @@ class RequirementsChecker {
 	 * @return string System information summary
 	 */
 	public function getSystemInformation() {
-		$value = 'Unknown';
+		$value = '';
 		if(preg_match('/WIN/', PHP_OS)) {
 			@exec('systeminfo', $output, $return_var);
 			if($return_var === 0) {
@@ -312,7 +312,7 @@ class RequirementsChecker {
 			}
 		}
 
-		return $value;
+		return ($value) ? $value : 'Unknown';
 	}
 
 }
