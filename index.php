@@ -175,7 +175,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertPhpOpcodeCacherEnabled() {
-		return $this->getPhpOpcodeCacher();
+		return $this->getPhpOpcodeCacher() ? true : false;
 	}
 
 	/**
@@ -196,7 +196,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertDefaultPhpTempPath() {
-		return $this->getDefaultPhpTempPath();
+		return $this->getDefaultPhpTempPath() ? true : false;
 	}
 
 	/**
@@ -260,6 +260,8 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertWebserverUrlRewritingSupport() {
+		if(!isset($_SERVER['HTTP_HOST'])) return null;
+
 		$path = 'rewritetest/.htaccess';
 		$fh = fopen($path, 'r');
 		$contents = fread($fh, filesize($path));
@@ -285,7 +287,7 @@ class RequirementsChecker {
 			fclose($fh);
 		}
 
-		return ($response) ? preg_match('/test.php queryval: testvalue/', $response) : false;
+		return preg_match('/test.php queryval: testvalue/', $response) ? true : false;
 	}
 
 	/**
@@ -350,17 +352,17 @@ class RequirementsFormatter {
 	 * Return a message from an assertion suitable for someone to read.
 	 * 
 	 * @param string $name Name of the assertion made, e.g. "PHP memory at least 64M"
-	 * @param boolean $result Boolean result of assertion, either TRUE passed or FALSE failed
+	 * @param boolean $result boolean|null result of assertion, either TRUE passed or FALSE failed or NULL for skipped
 	 * @param string $message Optional: Message to show when failure occurs
 	 * @param boolean $fatal Optional: Show assertion failure as fatal. Set to false for warning
 	 * @return string Assertion encoded in an HTML string (or without HTML if in CLI mode)
 	 */
 	public function showAssertion($assertion, $result, $message, $fatal = true) {
-		$status = ($result == true) ? 'passed' : ($fatal ? 'failed' : 'warning');
-		if($result == true) {
-			$text = strtoupper($status) . ': ' . $assertion;
-		} else {
+		$status = ($result === true) ? 'passed' : ($result === null ? 'skipped' : ($fatal ? 'failed' : 'warning'));
+		if($result === null || $result === false) {
 			$text = strtoupper($status) . ': ' . $message;
+		} else {
+			$text = strtoupper($status) . ': ' . $assertion;
 		}
 
 		return $this->show(sprintf('<span class="%s">', $status) . $text . '</span>');
@@ -397,6 +399,8 @@ $r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
 $usingPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
+$usingWindows = preg_match('/WIN/', PHP_OS) ? true : false;
+$usingCli = !isset($_SERVER['HTTP_HOST']);
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<html>' . PHP_EOL;
@@ -413,22 +417,20 @@ echo $f->heading('SilverStripe Requirements Checker', 1);
 
 echo $f->heading('System information', 2);
 echo $f->show(sprintf('System: %s', $r->getSystemInformation()));
-if(isset($_SERVER['HTTP_HOST'])) echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
+echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
 echo $f->show(sprintf('SAPI: %s', php_sapi_name()));
 echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
 echo $f->nl();
 
-if(isset($_SERVER['HTTP_HOST'])) {
-	echo $f->heading('Webserver configuration', 2);
-	echo $f->showAssertion(
-		'URL rewrite support',
-		$r->assertWebserverUrlRewritingSupport(),
-		sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
-		false
-	);
-	echo $f->nl();
-}
+echo $f->heading('Webserver configuration', 2);
+echo $f->showAssertion(
+	'URL rewrite support',
+	$r->assertWebserverUrlRewritingSupport(),
+	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
+	false
+);
+echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion(
@@ -531,9 +533,9 @@ echo $f->showAssertion(
 	$r->assertPhpExtensionLoaded('mbstring'),
 	'mbstring extension not loaded'
 );
-if(!preg_match('/WIN/', PHP_OS)) echo $f->showAssertion(
+echo $f->showAssertion(
 	'posix extension loaded',
-	$r->assertPhpExtensionLoaded('posix'),
+	$usingWindows ? null : $r->assertPhpExtensionLoaded('posix'),
 	'posix extension not loaded'
 );
 echo $f->showAssertion(
