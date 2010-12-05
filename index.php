@@ -332,7 +332,7 @@ class RequirementsFormatter {
 	 * @return boolean TRUE yes | FALSE no
 	 */
 	protected function isCli() {
-		return !isset($_SERVER['HTTP_HOST']);
+		return (php_sapi_name() == 'cli') ? true : false;
 	}
 
 	/**
@@ -398,7 +398,7 @@ $f = new RequirementsFormatter();
 
 $usingPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
 $usingWindows = preg_match('/WIN/', PHP_OS) ? true : false;
-$usingCli = !isset($_SERVER['HTTP_HOST']);
+$usingCli = (php_sapi_name() == 'cli') ? true : false;
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<html>' . PHP_EOL;
