@@ -297,7 +297,7 @@ class RequirementsChecker {
 	public function getSystemInformation() {
 		$value = '';
 		if(preg_match('/WIN/', PHP_OS)) {
-			exec('systeminfo', $output, $return_var);
+			@exec('systeminfo', $output, $return_var);
 			if($return_var === 0) {
 				foreach($output as $info) {
 					if(preg_match('/OS/', $info)) {
@@ -314,9 +314,7 @@ class RequirementsChecker {
 			}
 		}
 
-		if(!$value) $value = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'Unknown';
-
-		return $value;
+		return ($value) ? $value : 'Unknown';
 	}
 
 }
