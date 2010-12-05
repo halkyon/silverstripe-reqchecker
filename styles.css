@@ -20,3 +20,6 @@ span.failed {
 span.warning {
 	color: orange;
 }
+span.skipped {
+	color: grey;
+}
