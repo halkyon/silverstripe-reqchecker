@@ -41,6 +41,8 @@ You can also run the checker on the command line. For example:
 
 ## Future enhancements
 
+ * Check file uploads by PHP moved into a publically viewable directory are accessible in the URL.
+   Windows will fail if the IIS_IUSR group is not assigned to uploaded temp files when moved (temp path missing permissions)
  * Provide more detailed explanations and suggestions where failures and warnings occur
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
  * Database checks - by default, MySQL version
