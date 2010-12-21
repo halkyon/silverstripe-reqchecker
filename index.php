@@ -206,7 +206,7 @@ class RequirementsChecker {
 	public function assertDefaultPhpTempPathWritable() {
 		$result = false;
 		$path = $this->getDefaultPhpTempPath() . DIRECTORY_SEPARATOR . 'ssreqcheck-test';
-		$result = mkdir($path);
+		$result = @mkdir($path);
 		if($result) rmdir($path);
 		return $result;
 	}
@@ -511,7 +511,7 @@ echo $f->showAssertion(
 	$r->assertPhpExtensionLoaded('gd'),
 	'gd extension not loaded'
 );
-echo $f->showAssertion(
+if($r->assertPhpExtensionLoaded('gd')) echo $f->showAssertion(
 	sprintf('gd extension version at least <strong>2.0</strong> (%s)', $r->getPhpExtensionVersion('gd')),
 	$r->assertMinimumPhpExtensionVersion('gd', '2.0'),
 	'gd extension is too old. SilverStripe requires at least gd version 2.0'
