@@ -41,6 +41,8 @@ You can also run the checker on the command line. For example:
 
 ## Future enhancements
 
+ * Check file uploads by PHP moved into a publically viewable directory with rewriting turned on is accessible in the URL.
+   Windows, for example, uses C:\Windows\Temp for system temp. This path doesn't have IIS_IUSR permissions by default, which will cause issues with IIS URL Rewrite module tries to access any files created in this temp path, but moved into the SilverStripe assets directory
  * Provide more detailed explanations and suggestions where failures and warnings occur
  * Display value checks in tabular form, showing actual versus recommended values for PHP options
  * Database checks - by default, MySQL version
