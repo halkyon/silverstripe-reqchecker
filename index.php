@@ -444,7 +444,7 @@ echo $f->showAssertion(
 	sprintf('You only have %s memory. SilverStripe requires at least <strong>64M</strong>', ini_get('memory_limit')),
 	false
 );
-echo $f->showAssertion(
+if(!$r->assertMinimumPhpMemory('64M')) echo $f->showAssertion(
 	'can increase memory_limit option by 64M using ini_set()',
 	$r->assertIncreasePhpMemory('64M'),
 	'Unable to increase memory by 64M. Please make sure you set at least <strong>64M</strong> for PHP memory_limit option',
