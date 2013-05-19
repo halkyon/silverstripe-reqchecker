@@ -436,7 +436,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br> Please also check the web server can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL()),
+	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br> Please also check <strong>%2$s</strong> user can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL(), $processUserName),
 	false
 );
 echo $f->nl();
