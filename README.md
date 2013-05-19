@@ -5,6 +5,9 @@
 This is a script which will check your server environment to make sure it is configured correctly
 for [SilverStripe CMS / Framework](http://silverstripe.org).
 
+It doesn't require SilverStripe to be installed first, so it's a good way to check your environment
+is up to scratch before you install.
+
 It has been tested on the following dedicated platforms:
 
  * Mac OS X 10.7.0 (MacPorts): Apache 2.2.19 (mod_php5 SAPI), PHP 5.3.6
