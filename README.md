@@ -8,25 +8,10 @@ for [SilverStripe CMS / Framework](http://silverstripe.org).
 It doesn't require SilverStripe to be installed first, so it's a good way to check your environment
 is up to scratch before you install.
 
-It has been tested on the following dedicated platforms:
-
- * Mac OS X 10.7.0 (MacPorts): Apache 2.2.19 (mod_php5 SAPI), PHP 5.3.6
- * Mac OS X 10.6.5 (MacPorts): Apache 2.2.17 (mod_php5 SAPI), PHP 5.3.3
- * Windows 7 Professional x64: Apache 2.2.17 VC9 (mod_php5 SAPI), PHP 5.3.3 VC9 TS
- * Windows 7 Professional x64: Apache 2.2.17 VC9 (FastCGI SAPI), PHP 5.3.4 VC9 NTS
- * Windows Server 2008 R2 Standard x64: IIS 7.5 (FastCGI SAPI), PHP 5.3.3 VC9 NTS
- * Debian GNU/Linux "lenny": Apache 2.2.9 (mod_php5 SAPI), PHP 5.2.6
- * Ubuntu Server 10.10: Apache 2.2.16 (mod_php5 SAPI), PHP 5.3.3
-
-It has also been tested on the following shared web hosts:
-
- * Arvixe Red Hat Linux: Apache 2.2.16 (CGI SAPI), PHP 5.2.14
- * 1&1 Internet AG: Apache (CGI SAPI), PHP 5.2.14
-
 ## Requirements
 
  * Apache or IIS 7.x webserver (nginx and lighttpd may work, but not tested)
- * PHP 5.2.0+ (PHP 5.1.6 may work, but not tested)
+ * PHP 5.3.2+
 
 ## Using
 
