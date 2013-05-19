@@ -1,5 +1,5 @@
 <?php
-error_reporting(E_ALL);
+error_reporting(E_ALL | E_STRICT);
 
 /**
  * Checks that the server environment is up to scratch for running
@@ -425,7 +425,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly', $r->getWebserverUrlRewritingURL()),
+	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br>Please also check the web server can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL()),
 	false
 );
 echo $f->nl();
