@@ -416,6 +416,17 @@ echo $f->heading('SilverStripe Requirements Checker', 1);
 echo $f->heading('System information', 2);
 echo $f->show(sprintf('System: %s', $r->getSystemInformation()));
 echo $f->show(sprintf('Webserver Software: %s', isset($_SERVER['SERVER_SOFTWARE']) ? $_SERVER['SERVER_SOFTWARE'] : 'Unknown'));
+
+// see if we can show who the process owner is (the web server user, mostly)
+if(function_exists('posix_getpwuid')) {
+	$processUser = posix_getpwuid(posix_geteuid());
+	$processUserName = $processUser['name'];
+} else {
+	// on windows, get_current_user() returns the process user, not the owner of the script!
+	$processUserName = get_current_user();
+}
+
+echo $f->show(sprintf('Current process user: %s', $processUserName));
 echo $f->show(sprintf('SAPI: %s', php_sapi_name()));
 echo $f->show(sprintf('PHP Version: %s', PHP_VERSION));
 echo $f->show(sprintf('PHP configuration file path: %s', get_cfg_var('cfg_file_path')));
@@ -425,7 +436,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br>Please also check the web server can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL()),
+	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br> Please also check the web server can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL()),
 	false
 );
 echo $f->nl();
@@ -568,15 +579,15 @@ echo $f->showAssertion(
 echo $f->nl();
 
 echo $f->showAssertion(
-	sprintf('default temp path is accessible (%s)', $r->getDefaultPhpTempPath()),
+	sprintf('default temp path is accessible by <strong>%s</strong> user (%s)', $processUserName, $r->getDefaultPhpTempPath()),
 	$r->assertDefaultPhpTempPath(),
-	'no default temp path found. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with webserver user write permissions',
+	sprintf('no default temp path found. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with </strong>%s</strong> user write permissions', $processUserName),
 	false
 );
 if($r->getDefaultPhpTempPath()) echo $f->showAssertion(
-	'default temp path is writable, new directories can be created',
+	sprintf('default temp path is writable by <strong>%s</strong> user, new directories can be created (%s)', $processUserName, $r->getDefaultPhpTempPath()),
 	$r->assertDefaultPhpTempPathWritable(),
-	'default temp path is not writable, new directories cannot be created. Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with webserver user write permissions',
+	sprintf('default temp path is not writable by <strong>%1$s</strong> user, new directories cannot be created.<br> Please create a <strong>silverstripe-cache</strong> directory where SilverStripe is located with <strong>%1$s</strong> user write permissions', $processUserName),
 	false
 );
 
