@@ -20,7 +20,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertPhpIniOptionOff($option) {
-		return ini_get($option) == false;
+		return !ini_get($option);
 	}
 
 	/**
@@ -163,11 +163,19 @@ class RequirementsChecker {
 	 * @return string Name of opcode cacher and version number (if available)
 	 */
 	public function getPhpOpcodeCacher() {
-		if($this->assertPhpExtensionLoaded('xcache') && ini_get('xcache.cacher')) return trim('XCache ' . $this->getPhpExtensionVersion('xcache'));
-		elseif($this->assertPhpExtensionLoaded('wincache') && ini_get('wincache.ocenabled')) return trim('WinCache ' . $this->getPhpExtensionVersion('wincache'));
-		elseif($this->assertPhpExtensionLoaded('eaccelerator') && ini.get('eaccelerator.enable')) return trim('eAccelerator ' . $this->getPhpExtensionVersion('eaccelerator'));
-		elseif($this->assertPhpExtensionLoaded('apc') && ini_get('apc.enabled')) return trim('APC ' . $this->getPhpExtensionVersion('apc'));
-		else return false;
+		if($this->assertPhpExtensionLoaded('xcache') && ini_get('xcache.cacher')) {
+			return trim('XCache ' . $this->getPhpExtensionVersion('xcache'));
+		} elseif($this->assertPhpExtensionLoaded('wincache') && ini_get('wincache.ocenabled')) {
+			return trim('WinCache ' . $this->getPhpExtensionVersion('wincache'));
+		} elseif($this->assertPhpExtensionLoaded('eaccelerator') && ini.get('eaccelerator.enable')) {
+			return trim('eAccelerator ' . $this->getPhpExtensionVersion('eaccelerator'));
+		} elseif($this->assertPhpExtensionLoaded('apc') && ini_get('apc.enabled')) {
+			return trim('APC ' . $this->getPhpExtensionVersion('apc'));
+		} elseif($this->assertPhpExtensionLoaded('Zend OPcache') && ini_get('opcache.enable')) {
+			return trim('Zend OPcache ' . $this->getPhpExtensionVersion('Zend OPcache'));
+		}
+
+		return false;
 	}
 
 	/**
@@ -175,7 +183,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertPhpOpcodeCacherEnabled() {
-		return $this->getPhpOpcodeCacher() ? true : false;
+		return (bool) $this->getPhpOpcodeCacher();
 	}
 
 	/**
@@ -196,7 +204,7 @@ class RequirementsChecker {
 	 * @return boolean TRUE passed assertion | FALSE failed assertion
 	 */
 	public function assertDefaultPhpTempPath() {
-		return $this->getDefaultPhpTempPath() ? true : false;
+		return (bool) $this->getDefaultPhpTempPath();
 	}
 
 	/**
@@ -216,7 +224,11 @@ class RequirementsChecker {
 	 * @return string
 	 */
 	public function getWebserverUrlRewritingURL() {
-		return sprintf('http://%s/%s/rewritetest/test-url?testquery=testvalue', $_SERVER['HTTP_HOST'], trim(dirname($_SERVER['SCRIPT_NAME']), '/'));
+		return sprintf(
+			'http://%s/%s/rewritetest/test-url?testquery=testvalue',
+			$_SERVER['HTTP_HOST'],
+			trim(dirname($_SERVER['SCRIPT_NAME']), '/')
+		);
 	}
 
 	/**
@@ -230,6 +242,7 @@ class RequirementsChecker {
 	 */
 	public function getWebserverUrlRewritingResponse() {
 		$response = @file_get_contents($this->getWebserverUrlRewritingURL());
+
 		if(!$response) {
 			$response = '';
 			$url = parse_url($this->getWebserverUrlRewritingURL());
@@ -247,6 +260,7 @@ class RequirementsChecker {
 				fclose($fp);
 			}
 		}
+
 		return $response;
 	}
 
@@ -257,7 +271,7 @@ class RequirementsChecker {
 	 * check the response of a specific test URL in order to make a determination
 	 * of URL rewriting is working or not.
 	 * 
-	 * @return boolean TRUE passed assertion | FALSE failed assertion
+	 * @return boolean TRUE passed assertion | FALSE failed assertion | NULL skipped assertion
 	 */
 	public function assertWebserverUrlRewritingSupport() {
 		if(!isset($_SERVER['HTTP_HOST'])) return null;
@@ -287,7 +301,7 @@ class RequirementsChecker {
 			fclose($fh);
 		}
 
-		return preg_match('/test.php queryval: testvalue/', $response) ? true : false;
+		return (bool) preg_match('/test.php queryval: testvalue/', $response);
 	}
 
 	/**
@@ -314,7 +328,7 @@ class RequirementsChecker {
 			}
 		}
 
-		return ($value) ? $value : 'Unknown';
+		return $value ?: 'Unknown';
 	}
 
 }
@@ -331,8 +345,8 @@ class RequirementsFormatter {
 	 * Is PHP currently running as CLI?
 	 * @return boolean TRUE yes | FALSE no
 	 */
-	protected function isCli() {
-		return (php_sapi_name() == 'cli') ? true : false;
+	public function isCli() {
+		return php_sapi_name() == 'cli';
 	}
 
 	/**
@@ -397,8 +411,8 @@ $r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
 $usingPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
-$usingWindows = preg_match('/WIN/', PHP_OS) ? true : false;
-$usingCli = (php_sapi_name() == 'cli') ? true : false;
+$usingWindows = preg_match('/WIN/', PHP_OS);
+$usingCli = $f->isCli();
 
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<html>' . PHP_EOL;
@@ -573,7 +587,7 @@ echo $f->nl();
 echo $f->showAssertion(
 	sprintf('opcode cacher extension installed (%s)', $r->getPhpOpcodeCacher()),
 	$r->assertPhpOpcodeCacherEnabled(),
-	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable either XCache, WinCache, APC, or eAccelerator',
+	'no opcode cacher extension is installed and enabled. It is highly recommended to install and enable either Zend OPcache, XCache, WinCache, APC, or eAccelerator',
 	false
 );
 echo $f->nl();
