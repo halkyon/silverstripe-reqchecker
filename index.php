@@ -405,10 +405,6 @@ class RequirementsFormatter {
 $r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
-$usingAtLeastPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
-$usingWindows = preg_match('/WIN/', PHP_OS);
-$usingCli = $f->isCli();
-
 if(isset($_SERVER['HTTP_HOST'])) {
 	echo '<html>' . PHP_EOL;
 	echo '<head>' . PHP_EOL;
@@ -445,7 +441,7 @@ echo $f->heading('Webserver configuration', 2);
 echo $f->showAssertion(
 	'URL rewrite support',
 	$r->assertWebserverUrlRewritingSupport(),
-	$usingCli ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br> Please also check <strong>%2$s</strong> user can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL(), $processUserName),
+	$f->isCli() ? 'URL rewrite support. Please run the checker from your browser' : sprintf('URL rewrite test failed. Please check <a href="%1$s">%1$s</a> in your browser directly.<br> Please also check <strong>%2$s</strong> user can write to <strong>rewritetest/.htaccess</strong> and try again.', $r->getWebserverUrlRewritingURL(), $processUserName),
 	false
 );
 echo $f->nl();
@@ -480,7 +476,7 @@ echo $f->showAssertion(
 	sprintf('date.timezone option set and valid (%s)', ini_get('date.timezone')),
 	$r->assertPhpDateTimezoneSetAndValid(),
 	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong>, but it\'s not safe to rely on the system timezone', @date_default_timezone_get()),
-	$usingAtLeastPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+ due to strictness
+	version_compare(PHP_VERSION, '5.3', '>=') // show warning on versions less than PHP 5.3.0, failure on 5.3.0+ due to strictness
 );
 echo $f->showAssertion(
 	'asp_tags option set to <strong>Off</strong>',
@@ -553,7 +549,7 @@ echo $f->showAssertion(
 );
 echo $f->showAssertion(
 	'posix extension loaded',
-	$usingWindows ? null : $r->assertPhpExtensionLoaded('posix'),
+	preg_match('/WIN/', PHP_OS) ? null : $r->assertPhpExtensionLoaded('posix'),
 	'posix extension not loaded'
 );
 echo $f->showAssertion(
