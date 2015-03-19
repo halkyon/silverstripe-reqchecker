@@ -188,15 +188,10 @@ class RequirementsChecker {
 
 	/**
 	 * Return the default temp path PHP uses to store temporary files.
-	 * Uses sys_get_temp_dir() if available (PHP 5.2.1+), falling back
-	 * to directory name of temporary file created using tempnam()
-	 * 
 	 * @return string Path of temp path | FALSE cannot find path
 	 */
 	public function getDefaultPhpTempPath() {
-		$path = function_exists('sys_get_temp_dir') ? sys_get_temp_dir() : false;
-		if(!$path) $path = dirname(tempnam('asdf123nonexistantdirectory', 'foo'));
-		return $path;
+		return sys_get_temp_dir();
 	}
 
 	/**
@@ -410,7 +405,7 @@ class RequirementsFormatter {
 $r = new RequirementsChecker();
 $f = new RequirementsFormatter();
 
-$usingPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
+$usingAtLeastPhp53 = version_compare(PHP_VERSION, '5.3', '>=');
 $usingWindows = preg_match('/WIN/', PHP_OS);
 $usingCli = $f->isCli();
 
@@ -457,8 +452,8 @@ echo $f->nl();
 
 echo $f->heading('PHP configuration', 2);
 echo $f->showAssertion(
-	sprintf('PHP version at least <strong>5.2.0</strong> (%s)', PHP_VERSION),
-	$r->assertMinimumPhpVersion('5.2.0'),
+	sprintf('PHP version at least <strong>5.3.2</strong> (%s)', PHP_VERSION),
+	$r->assertMinimumPhpVersion('5.3.2'),
 	PHP_VERSION
 );
 echo $f->nl();
@@ -485,7 +480,7 @@ echo $f->showAssertion(
 	sprintf('date.timezone option set and valid (%s)', ini_get('date.timezone')),
 	$r->assertPhpDateTimezoneSetAndValid(),
 	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong>, but it\'s not safe to rely on the system timezone', @date_default_timezone_get()),
-	$usingPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+
+	$usingAtLeastPhp53 // show warning on versions less than PHP 5.3.0, failure on 5.3.0+ due to strictness
 );
 echo $f->showAssertion(
 	'asp_tags option set to <strong>Off</strong>',
