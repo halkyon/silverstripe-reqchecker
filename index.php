@@ -475,8 +475,7 @@ echo $f->showAssertion(
 echo $f->showAssertion(
 	sprintf('date.timezone option set and valid (%s)', ini_get('date.timezone')),
 	$r->assertPhpDateTimezoneSetAndValid(),
-	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong>, but it\'s not safe to rely on the system timezone', @date_default_timezone_get()),
-	version_compare(PHP_VERSION, '5.3', '>=') // show warning on versions less than PHP 5.3.0, failure on 5.3.0+ due to strictness
+	sprintf('date.timezone option needs to be set to your server timezone. PHP guessed <strong>%s</strong>, but it\'s not safe to rely on the system timezone', @date_default_timezone_get())
 );
 echo $f->showAssertion(
 	'asp_tags option set to <strong>Off</strong>',
