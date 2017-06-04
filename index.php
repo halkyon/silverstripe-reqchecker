@@ -167,7 +167,7 @@ class RequirementsChecker {
 			return trim('XCache ' . $this->getPhpExtensionVersion('xcache'));
 		} elseif($this->assertPhpExtensionLoaded('wincache') && ini_get('wincache.ocenabled')) {
 			return trim('WinCache ' . $this->getPhpExtensionVersion('wincache'));
-		} elseif($this->assertPhpExtensionLoaded('eaccelerator') && ini.get('eaccelerator.enable')) {
+		} elseif($this->assertPhpExtensionLoaded('eaccelerator') && ini_get('eaccelerator.enable')) {
 			return trim('eAccelerator ' . $this->getPhpExtensionVersion('eaccelerator'));
 		} elseif($this->assertPhpExtensionLoaded('apc') && ini_get('apc.enabled')) {
 			return trim('APC ' . $this->getPhpExtensionVersion('apc'));
