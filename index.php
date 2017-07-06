@@ -163,7 +163,9 @@ class RequirementsChecker {
 	 * @return string Name of opcode cacher and version number (if available)
 	 */
 	public function getPhpOpcodeCacher() {
-		if($this->assertPhpExtensionLoaded('xcache') && ini_get('xcache.cacher')) {
+		if ($this->assertPhpExtensionLoaded('Zend OPcache') && ini_get('opcache.enable')) {
+			return trim('Zend OPcache ' . $this->getPhpExtensionVersion('Zend OPcache'));
+		} elseif($this->assertPhpExtensionLoaded('xcache') && ini_get('xcache.cacher')) {
 			return trim('XCache ' . $this->getPhpExtensionVersion('xcache'));
 		} elseif($this->assertPhpExtensionLoaded('wincache') && ini_get('wincache.ocenabled')) {
 			return trim('WinCache ' . $this->getPhpExtensionVersion('wincache'));
@@ -171,8 +173,6 @@ class RequirementsChecker {
 			return trim('eAccelerator ' . $this->getPhpExtensionVersion('eaccelerator'));
 		} elseif($this->assertPhpExtensionLoaded('apc') && ini_get('apc.enabled')) {
 			return trim('APC ' . $this->getPhpExtensionVersion('apc'));
-		} elseif($this->assertPhpExtensionLoaded('Zend OPcache') && ini_get('opcache.enable')) {
-			return trim('Zend OPcache ' . $this->getPhpExtensionVersion('Zend OPcache'));
 		}
 
 		return false;
